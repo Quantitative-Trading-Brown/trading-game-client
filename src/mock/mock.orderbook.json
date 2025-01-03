@@ -1,0 +1,37 @@
+{
+    "securities": [
+        {
+            "name": "Walan Aang",
+            "prices": [
+                { "price": 62, "askVolume": 0, "bidVolume": 100 },
+                { "price": 63, "askVolume": 0, "bidVolume": 80 },
+                { "price": 64, "askVolume": 0, "bidVolume": 60 },
+                { "price": 65, "askVolume": 0, "bidVolume": 40 },
+                { "price": 66, "askVolume": 20, "bidVolume": 0 },
+                { "price": 67, "askVolume": 40, "bidVolume": 0 }
+            ]
+        },
+        {
+            "name": "Eyan reng",
+            "prices": [
+                { "price": 62, "askVolume": 0, "bidVolume": 90 },
+                { "price": 63, "askVolume": 0, "bidVolume": 70 },
+                { "price": 64, "askVolume": 0, "bidVolume": 50 },
+                { "price": 65, "askVolume": 0, "bidVolume": 30 },
+                { "price": 66, "askVolume": 25, "bidVolume": 0 },
+                { "price": 67, "askVolume": 45, "bidVolume": 0 }
+            ]
+        },
+        {
+            "name": "Mhali Gaata",
+            "prices": [
+                { "price": 62, "askVolume": 0, "bidVolume": 110 },
+                { "price": 63, "askVolume": 0, "bidVolume": 85 },
+                { "price": 64, "askVolume": 0, "bidVolume": 65 },
+                { "price": 65, "askVolume": 0, "bidVolume": 45 },
+                { "price": 66, "askVolume": 30, "bidVolume": 0 },
+                { "price": 67, "askVolume": 50, "bidVolume": 0 }
+            ]
+        }
+    ]
+}
