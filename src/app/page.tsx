@@ -1,92 +1,96 @@
-"use client"
-import React, { useState } from 'react';
-import axios from 'axios';
+"use client";
+import React, { useState } from "react";
+import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 const API_BASE = "http://127.0.0.1:5000";
 
 const GameCodeSystem = () => {
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useState("");
-  const [players, setPlayers] = useState([]);
   const [status, setStatus] = useState("");
 
   const createGame = async () => {
     try {
-      const response = await axios.post(`${API_BASE}/create_game`);
+      const response = await axios.post(`${API_BASE}/create-game`);
       setGameCode(response.data.code);
-      setPlayers([]);
       setStatus("Game created successfully!");
     } catch (err) {
-      setStatus("Error creating game.");
+      setStatus(`Error creating game: ${err}`);
     }
   };
 
   const joinGame = async () => {
     try {
-      const response = await axios.post(`${API_BASE}/join_game`, {
+      const response = await axios.post(`${API_BASE}/join-game`, {
         code: gameCode,
         playerName,
       });
-      setPlayers(response.data.players);
+      localStorage.setItem('user_token', response.data.token);
+
       setStatus("Joined game successfully!");
+      // window.location.href = "/lobby";
     } catch (err) {
       setStatus(err.response.data.error || "Error joining game.");
     }
   };
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    } else {
+      document.exitFullscreen().catch(console.error);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Game Join Code System</h1>
-      <div className="space-y-4">
-        <button
-          onClick={createGame}
-          className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-        >
-          Create Game
-        </button>
-
-        {gameCode && (
-          <p className="text-lg font-semibold">
-            Your Game Code: <span className="text-blue-500">{gameCode}</span>
-          </p>
-        )}
-
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            placeholder="Game Code"
-            value={gameCode}
-            onChange={(e) => setGameCode(e.target.value)}
-            className="px-4 py-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Player Name"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            className="px-4 py-2 border rounded"
-          />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black font-mono">
+      <h1 className="text-5xl font-extrabold tracking-wide mb-8 text-gray-100">
+        QTAB Trading Game
+      </h1>
+      <div className="space-y-8 w-full max-w-lg p-8 bg-gray-800 shadow-lg border border-gray-700">
+        <div className="flex flex-col space-y-6">
           <button
-            onClick={joinGame}
-            className="px-4 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600"
+            onClick={createGame}
+            className="w-full px-4 py-2 bg-red-700 text-white text-lg font-semibold shadow-lg hover:bg-red-600 hover:shadow-xl hover:scale-105 transition-all"
           >
-            Join Game
+            Create Game
           </button>
-        </div>
+          <hr className="border-gray-600" />
 
-        <p className="text-gray-700">{status}</p>
-
-        {players.length > 0 && (
-          <div>
-            <h2 className="text-lg font-bold">Players in Game:</h2>
-            <ul className="list-disc ml-6">
-              {players.map((player, index) => (
-                <li key={index}>{player}</li>
-              ))}
-            </ul>
+          <div className="flex flex-col space-y-6">
+            <input
+              type="text"
+              placeholder="Enter Game Code"
+              value={gameCode}
+              onChange={(e) => setGameCode(e.target.value)}
+              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 font-mono"
+            />
+            <input
+              type="text"
+              placeholder="Enter Player Name"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 font-mono"
+            />
+            <button
+              onClick={joinGame}
+              className="w-full px-4 py-2 bg-green-700 text-white text-lg font-semibold shadow-lg hover:bg-green-600 hover:shadow-xl hover:scale-105 transition-all"
+            >
+              Join Game
+            </button>
           </div>
-        )}
+
+          <p className="text-center mt-4 text-sm text-gray-400">{status}</p>
+        </div>
       </div>
+
+      <button
+        onClick={toggleFullScreen}
+        className="fixed bottom-4 right-4 p-4 bg-gray-700 text-white shadow-lg hover:bg-gray-600 hover:shadow-xl transition-all"
+      >
+        Full Screen
+      </button>
     </div>
   );
 };
