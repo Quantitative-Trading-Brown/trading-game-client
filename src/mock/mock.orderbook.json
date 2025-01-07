@@ -3,34 +3,34 @@
         {
             "name": "Walan Aang",
             "prices": [
-                { "price": 62, "askVolume": 0, "bidVolume": 100 },
-                { "price": 63, "askVolume": 0, "bidVolume": 80 },
-                { "price": 64, "askVolume": 0, "bidVolume": 60 },
-                { "price": 65, "askVolume": 0, "bidVolume": 40 },
-                { "price": 66, "askVolume": 20, "bidVolume": 0 },
-                { "price": 67, "askVolume": 40, "bidVolume": 0 }
+                { "price": 62, "bidVolume": 0, "askVolume": 100 },
+                { "price": 63, "bidVolume": 0, "askVolume": 80 },
+                { "price": 64, "bidVolume": 0, "askVolume": 60 },
+                { "price": 65, "bidVolume": 0, "askVolume": 40 },
+                { "price": 66, "bidVolume": 20, "askVolume": 0 },
+                { "price": 67, "bidVolume": 40, "askVolume": 0 }
             ]
         },
         {
             "name": "Eyan reng",
             "prices": [
-                { "price": 62, "askVolume": 0, "bidVolume": 90 },
-                { "price": 63, "askVolume": 0, "bidVolume": 70 },
-                { "price": 64, "askVolume": 0, "bidVolume": 50 },
-                { "price": 65, "askVolume": 0, "bidVolume": 30 },
-                { "price": 66, "askVolume": 25, "bidVolume": 0 },
-                { "price": 67, "askVolume": 45, "bidVolume": 0 }
+                { "price": 62, "bidVolume": 0, "askVolume": 90 },
+                { "price": 63, "bidVolume": 0, "askVolume": 70 },
+                { "price": 64, "bidVolume": 0, "askVolume": 50 },
+                { "price": 65, "bidVolume": 0, "askVolume": 30 },
+                { "price": 66, "bidVolume": 25, "askVolume": 0 },
+                { "price": 67, "bidVolume": 45, "askVolume": 0 }
             ]
         },
         {
             "name": "Mhali Gaata",
             "prices": [
-                { "price": 62, "askVolume": 0, "bidVolume": 110 },
-                { "price": 63, "askVolume": 0, "bidVolume": 85 },
-                { "price": 64, "askVolume": 0, "bidVolume": 65 },
-                { "price": 65, "askVolume": 0, "bidVolume": 45 },
-                { "price": 66, "askVolume": 30, "bidVolume": 0 },
-                { "price": 67, "askVolume": 50, "bidVolume": 0 }
+                { "price": 62, "bidVolume": 0, "askVolume": 110 },
+                { "price": 63, "bidVolume": 0, "askVolume": 85 },
+                { "price": 64, "bidVolume": 0, "askVolume": 65 },
+                { "price": 65, "bidVolume": 0, "askVolume": 45 },
+                { "price": 66, "bidVolume": 30, "askVolume": 0 },
+                { "price": 67, "bidVolume": 50, "askVolume": 0 }
             ]
         }
     ]
