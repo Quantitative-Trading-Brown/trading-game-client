@@ -3,41 +3,54 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
-
-const GameCodeSystem = () => {
+const Home = () => {
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [status, setStatus] = useState("");
 
   const createGame = async () => {
     try {
-      const response = await axios.post(`${API_BASE}/create-game`);
-      localStorage.setItem('admin_code', response.data.code);
-      localStorage.setItem('admin_token', response.data.token);
-
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE}/create-game`,
+      );
+      localStorage.setItem("admin_code", response.data.code);
+      localStorage.setItem("admin_token", response.data.token);
       setStatus("Game created successfully!");
       window.location.href = "/admin";
     } catch (err) {
-      setStatus(`Error creating game: ${err}`);
+      if (err.response) {
+        setStatus(`Error creating game: ${err.response}`)
+      } else {
+        setStatus(`Error creating game: ${err}`);
+      }
     }
   };
 
   const joinGame = async () => {
+    if (!playerName) {
+      setStatus("Username must be non-empty");
+      return
+    }
     try {
-      const response = await axios.post(`${API_BASE}/join-game`, {
-        code: gameCode,
-        playerName,
-      });
-      localStorage.setItem('player_code', response.data.code);
-      localStorage.setItem('player_token', response.data.token);
-
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE}/join-game`,
+        {
+          code: gameCode,
+          playerName,
+        },
+      );
+      localStorage.setItem("player_code", gameCode);
+      localStorage.setItem("player_token", response.data.token);
       setStatus("Joined game successfully!");
-      // window.location.href = "/lobby";
+      window.location.href = "/player";
     } catch (err) {
-      setStatus(err.response.data.error || "Error joining game.");
+      if (err.response) {
+        setStatus(`Error creating game: ${err.response.data.error}`)
+      } else {
+        setStatus(`Error creating game: ${err}`);
+      }
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -84,9 +97,8 @@ const GameCodeSystem = () => {
           <p className="text-center mt-4 text-sm text-gray-400">{status}</p>
         </div>
       </div>
-
     </div>
   );
 };
 
-export default GameCodeSystem;
+export default Home;

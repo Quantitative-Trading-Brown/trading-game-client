@@ -1,0 +1,15 @@
+{
+    "securities": [
+        {
+            "name": "Test Security",
+            "prices": [
+                { "price": 62, "volume": 0 },
+                { "price": 63, "volume": 0 },
+                { "price": 64, "volume": 0 },
+                { "price": 65, "volume": 0 },
+                { "price": 66, "volume": 0 },
+                { "price": 67, "volume": 0 }
+            ]
+        }
+    ]
+}

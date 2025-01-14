@@ -1,44 +1,47 @@
 "use client";
 import { useState, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
-
-const socket: Socket = io("http://localhost:5000");
+import { useSocket } from "@/contexts/SocketContext";
 
 const News = () => {
   const [messages, setMessages] = useState<string[]>([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string>("");
+  const { socket } = useSocket();
 
   useEffect(() => {
-    // Listen for messages from the server
-    socket.on("message", (msg: string) => {
-      setMessages((prevMessages) => [msg, ...prevMessages]);
-    });
+    if (socket) {
+      socket.on("message", (msg: string) => {
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        setMessages((prevMessages) => [[msg, n], ...prevMessages]);
+        console.log("Game update:", n);
+      });
 
-    // Cleanup when component unmounts
-    return () => {
-      socket.off("message");
-    };
-  }, []);
+      return () => {
+        socket.off("message");
+      };
+    }
+  }, [socket]);
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
-    if (message.trim()) {
-      socket.send(message);
-      setMessage('');
+      if (message.trim()) {
+        socket.send(message);
+        setMessage("");
+      }
     }
-    }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full p-4 max-w-lg w-[30em] mx-auto">
       <h2 className="text-lg font-bold mb-4">Market News</h2>
-      <div className="flex flex-col-reverse gap-2 flex-grow mb-4 w-full
-      overflow-scroll overscroll-contain">
-        {messages.map((msg, index) => (
+      <div
+        className="flex flex-col-reverse flex-grow gap-2 mb-4 w-full overflow-scroll"
+      >
+        {messages.map((data, index) => (
           <div key={index} className="flex justify-between items-center gaps-5">
-            <p className="text-sm text-gray-300">{msg}</p>
-            <span className="text-xs text-gray-500">1 hour ago</span>
+            <p className="text-sm text-gray-300">{data[0]}</p>
+            <span className="text-xs text-gray-500">{data[1]}</span>
           </div>
         ))}
       </div>
@@ -48,7 +51,7 @@ const News = () => {
           value={message}
           onKeyPress={handleKeyPress}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
+          placeholder="Make some news..."
           className="w-full bg-gray-700 p-1"
         />
       </div>

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import orderbookData from "@/mock/mock.orderbook.json";
+import orderbookData from "@/assets/mock.orderbook.json";
 
 const Game = () => {
   const [selectedSecurity, setSelectedSecurity] = useState(
