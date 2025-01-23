@@ -1,162 +1,105 @@
 "use client";
-import { useState, useEffect, useReducer } from "react";
-import orderbookData from "@/assets/mock.orderbook.json";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+
 import { useSocket } from "@/contexts/SocketContext";
 
-const generateBook = (startPrice, endPrice) => {
-  return Array.from({ length: endPrice - startPrice + 1 }, (_, i) => ({
-    [endPrice - i]: 0,
-  })).reduce((acc, curr) => Object.assign(acc, curr), {});
-};
+import News from "@/components/news";
+import Graph from "@/components/graph";
+import Leaderboard from "@/components/leaderboard"
 
+import Orderbook from "./orderbook";
+import Lobby from "./lobby";
+import Inventory from "./inventory"
 
-const Game = ({ book }) => {
-  const [selectedSecurity, setSelectedSecurity] = useState(
-    orderbookData.securities[0].name,
-  );
-  const [bidAskQuantity, setBidAskQuantity] = useState(1);
-  const [orderbook, updateOrderbook] = useState(generateBook(0, 20));
+const Game = () => {
+  const [orderbook, setOrderbook] = useState({});
+  const [bookLim, setBookLim] = useState([0, 0]);
+  const [username, setUsername] = useState("");
+
+  const [loading, setLoading] = useState(true);
+  const [gameState, setGameState] = useState<boolean>(false);
+  const router = useRouter();
+
   const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
-      socket.on("orderbook", (msg: string) => {
-        updateOrderbook(existing => {return {...existing, ...msg}});
+      socket.on("gamedata", (snapshot) => {
+        setUsername(snapshot.username);
+        setOrderbook(snapshot.orderbook);
       });
 
+      socket.on("gamestate", (state) => {
+        setGameState(state);
+        setLoading(false);
+      });
+
+      socket.on("gamesettings", (settings) => {
+        setBookLim([settings.bookMin, settings.bookMax]);
+      });
+
+      socket.emit("snapshot");
+      socket.emit("settings");
+
       return () => {
-        socket.off("orderbook");
+        socket.off("gamesettings");
+        socket.off("gamedata");
+        socket.off("gamestate");
       };
     }
   }, [socket]);
 
-  useEffect(() => {
-    updateOrderbook(existing => {return {...existing, ...book}});
-  }, [])
+  if (loading) {
+    return "Loading...";
+  }
 
-  const handleBidAskQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setBidAskQuantity(parseInt(Math.max(1, Math.min(1e+3, Number(event.target.value)))));
-  };
-  const handleSecurityChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setSelectedSecurity(event.target.value);
-  };
-
-  const handleOrder = (order_type: string, price: string) => {
-    console.log(`${order_type} ${bidAskQuantity} at ${price}`);
-    socket.emit("order", order_type, Number(price), bidAskQuantity);
-  };
-  const handleCancelOrder = (price: number) => {
-    console.log(`Cancel orders at ${price}`);
-    socket.emit("cancel", price);
-  };
-  const handleCancelAllOrders = () => {
-    console.log("Cancel all orders");
-    socket.emit("cancel_all");
-  };
+  let Dash;
+  if (gameState == 1) {
+    Dash = (
+      <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-col flex-grow gap-2">
+          <div className="border-white border-2">
+            <Orderbook book={orderbook} bookLim={bookLim} />
+          </div>
+          <div className="flex-grow border-white border-2 p-10">
+            <Graph />
+          </div>
+        </div>
+        <div className="flex flex-col flex-grow gap-2">
+          <div className="h-[30em] border-white border-2 overflow-scroll">
+            <News admin={false} />
+          </div>
+          <div className="flex-grow border-white border-2">
+            <Inventory />
+          </div>
+        </div>
+      </div>
+    );
+  } else if (gameState == 2) {
+    Dash = 5;
+  } else {
+    Dash = (
+      <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+          <div className="border-white border-2 w-full">
+            <Lobby />
+          </div>
+        </div>
+        <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
+          <News admin={false} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex gap-10 justify-center items-center px-8 py-5">
-        <div>
-          <label htmlFor="security-select" className="mr-2">
-            Select Security:{" "}
-          </label>
-          <select
-            id="security-select"
-            value={selectedSecurity}
-            onChange={handleSecurityChange}
-            className="px-4 py-2 bg-gray-700"
-          >
-            {orderbookData.securities.map((security) => (
-              <option key={security.name} value={security.name}>
-                {security.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="bid-ask-quantity" className="mr-2">
-            Bid/Ask Quantity:{" "}
-          </label>
-          <input
-            id="bid-ask-quantity"
-            type="number"
-            onChange={handleBidAskQuantityChange}
-            className="w-[7em] px-2 py-1 bg-gray-700"
-          />
-        </div>
-        <button
-          onClick={handleCancelAllOrders}
-          className="px-2 py-1 h-10 bg-gray-500 text-white shadow 
-          border-gray-500 active:border-l-[2px] active:border-t-[2px]
-          hover:bg-red-600 flex-grow"
-        >
-          Cancel All Orders
-        </button>
+    <div className="flex flex-col items-center h-screen gap-2 p-2">
+      <div className="flex flex-none w-full h-[3em] justify-center items-center border-white border-2 p-2">
+        <h1 className="text-2xl font-bold">Username: {username}</h1>
       </div>
-      <div className="overflow-y-auto h-[20em]">
-        <table className="table-auto border-collapse w-full">
-          <thead className="outline outline-1 outline-offset-0 outline-red sticky top-0">
-            <tr className="bg-black">
-              <th className="text-left px-4 py-2">
-                Price
-              </th>
-              <th className="text-left px-4 py-2">
-                Bid Vol
-              </th>
-              <th className="text-left px-4 py-2">
-                Ask Vol
-              </th>
-              <th colSpan="3" className="text-center px-4 py-2">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="border-separate">
-            {Object.entries(orderbook).toReversed().map(([price, vol]) => (
-              <tr key={price} className="border-b border-gray-300">
-                <td className="px-4 h-10">{price}</td>
-                <td className={"px-4 h-10" + (vol > 0 ? " bg-green-700" : "")}>{Math.max(vol, 0)}</td>
-                <td className={"px-4 h-10" + (vol < 0 ? " bg-red-700" : "")}>{-Math.min(vol, 0)}</td>
-                <td className="h-10 p-0 border-x-white border-x w-[10em]">
-                  <button
-                    onClick={() => handleOrder("BUY", price)}
-                    className="px-4 py-2 bg-gray-500 w-full h-full 
-                    border-gray-500 active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600 truncate"
-                  >
-                    Buy {bidAskQuantity}
-                  </button>
-                </td>
-                <td className="h-10 p-0 border-x-white border-x w-[10em]">
-                  <button
-                    onClick={() => handleOrder("SELL", price)}
-                    className="px-4 py-2 bg-gray-500 w-full h-full 
-                    border-gray-500 active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600 truncate"
-                  >
-                    Sell {bidAskQuantity}
-                  </button>
-                </td>
-                <td className="h-10 p-0 border-x-white border-x w-[10em]">
-                  <button
-                    onClick={() => handleCancelOrder(price)}
-                    className="px-4 py-2 bg-gray-500 w-full h-full 
-                    border-gray-500 active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {Dash}
     </div>
   );
 };

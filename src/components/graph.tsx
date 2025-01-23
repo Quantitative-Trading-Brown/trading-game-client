@@ -64,7 +64,7 @@ const Graph = (props: { security: string }) => {
     },
   };
   const updateChart = (label, y) => {
-    setLabels((prevLabels) => [...prevLabels, label])
+    setLabels((prevLabels) => [...prevLabels, label]);
     setData((prevData) => [...prevData, y]); // New data
   };
 
@@ -77,7 +77,7 @@ const Graph = (props: { security: string }) => {
       });
 
       return () => {
-        socket.off("message");
+        socket.off("price");
       };
     }
   }, [socket]);

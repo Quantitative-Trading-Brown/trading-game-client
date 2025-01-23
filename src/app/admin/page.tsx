@@ -1,25 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SocketProvider } from "@/contexts/SocketContext";
-import Graph from "@/components/graph";
-
-import Game from "./game";
-import News from "./news";
 import axios from "axios";
+
+import { SocketProvider } from "@/contexts/SocketContext";
+import Game from "./game";
 
 const AdminPage = () => {
   const [code, setCode] = useState<string | null>(null);
   const [authenticated, setAuthenticated] = useState<string | null>(false);
   const router = useRouter();
 
-  const verifyAdmin = async (token) => {
+  const setup = async (token) => {
     if (!token) {
       router.push("/");
     }
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE}/snapshot`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth`,
         {
           token: token,
         },
@@ -40,7 +38,7 @@ const AdminPage = () => {
     const storedCode = localStorage.getItem("admin_code");
     const storedToken = localStorage.getItem("admin_token");
     setCode(storedCode);
-    verifyAdmin(storedToken);
+    setup(storedToken);
   }, []);
 
   if (!authenticated) {
@@ -52,25 +50,7 @@ const AdminPage = () => {
       namespace="admin"
       query={{ token: localStorage.getItem("admin_token") }}
     >
-      <div className="flex flex-col items-center h-screen gap-2 p-2">
-        <div className="flex flex-none w-full h-[3em] justify-center items-center border-white border-2 p-2">
-          <h1 className="text-2xl font-bold">Game Code: {code}</h1>
-        </div>
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex flex-col flex-grow gap-2">
-            <div className="border-white border-2">
-              <Game />
-            </div>
-            <div className="flex-grow border-white border-2 p-10">
-              <Graph />
-            </div>
-          </div>
-
-          <div className="border-white border-2 overflow-scroll overscroll-contain">
-            <News />
-          </div>
-        </div>
-      </div>
+      <Game />
     </SocketProvider>
   );
 };
