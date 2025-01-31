@@ -4,14 +4,15 @@ import { useSocket } from "@/contexts/SocketContext";
 
 const Leaderboard = ({ admin }) => {
   const [rankings, setRankings] = useState([]);
-  const [buffer, setBuffer] = useState([]);
   const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
       socket.on("leaderboard", (rankings) => {
-        setRankings(rankings)
+        setRankings(rankings);
       });
+
+      socket.emit("leaderboard");
 
       return () => {
         socket.off("leaderboard");
@@ -20,16 +21,25 @@ const Leaderboard = ({ admin }) => {
   }, [socket]);
 
   return (
-    <div className="flex flex-col text-white p-4 h-full mx-auto rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold mb-4">Leaderboard</h2>
-      <div className="flex-grow space-y-2 overflow-y-auto">
-        {rankings.map((playerData, index) => (
-          <div key={index} className="flex justify-between items-center gaps-5">
-            <p className="text-sm text-gray-300">{index+1}</p>
-            <span className="text-xs text-gray-500">{playerData}</span>
-          </div>
-        ))}
-      </div>
+    <div>
+      <table className="ranking-table table-auto border-collapse w-full">
+        <thead className="outline outline-1 outline-offset-0 outline-red sticky top-0">
+          <tr className="bg-black">
+            <th className="text-left px-4 py-2">Ranking</th>
+            <th className="text-left px-4 py-2">Username</th>
+            <th className="text-left px-4 py-2">Score</th>
+          </tr>
+        </thead>
+        <tbody className="border-separate">
+          {rankings.map((player_info, index) => (
+            <tr key={index} className="border-b border-gray-300">
+              <td className="px-4 h-10">{index + 1}</td>
+              <td className="px-4 h-10">{player_info[0]}</td>
+              <td className="px-4 h-10">{player_info[1]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

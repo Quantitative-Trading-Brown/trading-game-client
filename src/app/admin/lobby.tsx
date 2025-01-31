@@ -26,8 +26,7 @@ const Lobby = () => {
   };
 
   const handleGameStart = (event) => {
-    socket.emit("settings", settings);
-    socket.emit("startgame");
+    socket.emit("startgame", settings);
   };
 
   return (

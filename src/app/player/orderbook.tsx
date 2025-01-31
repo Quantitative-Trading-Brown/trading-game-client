@@ -13,8 +13,12 @@ const Orderbook = ({ book, bookLim }) => {
     "Test Security",
   );
   const [bidAskQuantity, setBidAskQuantity] = useState(1);
-  const [orderbook, setOrderbook] = useState(generateBook(bookLim));
+  const [orderbook, setOrderbook] = useState([0,0]);
   const { socket } = useSocket();
+
+  useEffect(() => {
+    setOrderbook(generateBook(bookLim));
+  }, [bookLim]);
 
   useEffect(() => {
     if (socket) {

@@ -1,17 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
+import db from "@/scripts/firestore";
 import axios from "axios";
 
 const Home = () => {
+  const [backend, setBackend] = useState(localStorage.getItem("backend_ip") || "");
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [status, setStatus] = useState("");
+  const [sponsors, setSponsors] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "images"));
+        const documents = querySnapshot.docs;
+        const data = Object.fromEntries(
+          documents.map((doc) => [doc.id, doc.data()]),
+        );
+        setSponsors(data.banner.link);
+      } catch (error) {
+        console.error("Error fetching Firestore data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const createGame = async () => {
+    localStorage.setItem("backend_ip", backend);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE}/create-game`,
+        `${localStorage.getItem("backend_ip")}/create-game`,
       );
       localStorage.setItem("admin_code", response.data.code);
       localStorage.setItem("admin_token", response.data.token);
@@ -19,7 +41,7 @@ const Home = () => {
       window.location.href = "/admin";
     } catch (err) {
       if (err.response) {
-        setStatus(`Error creating game: ${err.response}`)
+        setStatus(`Error creating game: ${err.response}`);
       } else {
         setStatus(`Error creating game: ${err}`);
       }
@@ -27,13 +49,14 @@ const Home = () => {
   };
 
   const joinGame = async () => {
+    localStorage.setItem("backend_ip", backend);
     if (!playerName) {
       setStatus("Username must be non-empty");
-      return
+      return;
     }
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE}/join-game`,
+        `${localStorage.getItem("backend_ip")}/join-game`,
         {
           code: gameCode,
           playerName,
@@ -45,7 +68,7 @@ const Home = () => {
       window.location.href = "/player";
     } catch (err) {
       if (err.response) {
-        setStatus(`Error creating game: ${err.response.data.error}`)
+        setStatus(`Error creating game: ${err.response.data.error}`);
       } else {
         setStatus(`Error creating game: ${err}`);
       }
@@ -53,12 +76,27 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-5xl font-extrabold tracking-wide mb-8 text-gray-100">
-        QTAB Trading Game
-      </h1>
-      <div className="space-y-8 w-full max-w-lg p-8 bg-gray-800 shadow-lg border border-gray-700">
+    <div
+      className="h-screen flex flex-col justify-center items-start 
+    bg-[url(/images/home-bg.jpg)] bg-cover"
+    >
+      <div
+        className="space-y-8 max-w-[35em] w-full ml-8 p-8 
+        bg-gray-800 shadow-lg border border-l-0 border-gray-700"
+      >
+        <h1 className="text-4xl font-semibold pl-4">QTAB Trading Simulator</h1>
         <div className="flex flex-col space-y-6">
+          <div className="flex flex-col space-y-6">
+            <input
+              type="text"
+              placeholder="Enter backend IP address"
+              value={backend}
+              onChange={(e) => setBackend(e.target.value)}
+              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg 
+              border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <hr className="border-gray-600" />
           <button
             onClick={createGame}
             className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg 
@@ -95,6 +133,14 @@ const Home = () => {
           </div>
 
           <p className="text-center mt-4 text-sm text-gray-400">{status}</p>
+        </div>
+      </div>
+      <div className="absolute bottom-[1em]">
+        <div className="overflow-hidden whitespace-nowrap justify-center flex relative py-[2em]">
+          <div className="flex animate-marquee">
+            <img src={sponsors} />
+            <img src={sponsors} />
+          </div>
         </div>
       </div>
     </div>

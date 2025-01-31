@@ -7,11 +7,12 @@ import { useSocket } from "@/contexts/SocketContext";
 
 import News from "@/components/news";
 import Graph from "@/components/graph";
-import Leaderboard from "@/components/leaderboard"
+import Leaderboard from "@/components/leaderboard";
 
 import Orderbook from "./orderbook";
 import Lobby from "./lobby";
-import Inventory from "./inventory"
+import Inventory from "./inventory";
+import Resolution from "./resolution";
 
 const Game = () => {
   const [orderbook, setOrderbook] = useState({});
@@ -19,34 +20,38 @@ const Game = () => {
   const [username, setUsername] = useState("");
 
   const [loading, setLoading] = useState(true);
-  const [gameState, setGameState] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<number>(0);
   const router = useRouter();
 
   const { socket } = useSocket();
 
+  const updateProps = (props) => {
+    setBookLim([Number(props.bookMin), Number(props.bookMax)]);
+  };
+
+  const updateState = (state) => {
+    setGameState(Number(state));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (socket) {
-      socket.on("gamedata", (snapshot) => {
+      socket.on("snapshot", (snapshot) => {
         setUsername(snapshot.username);
         setOrderbook(snapshot.orderbook);
+        updateProps(snapshot.game_props);
+        updateState(Number(snapshot.game_state));
       });
 
-      socket.on("gamestate", (state) => {
-        setGameState(state);
-        setLoading(false);
-      });
-
-      socket.on("gamesettings", (settings) => {
-        setBookLim([settings.bookMin, settings.bookMax]);
-      });
+      socket.on("gamestate_update", updateState);
+      socket.on("gameprops_update", updateProps);
 
       socket.emit("snapshot");
-      socket.emit("settings");
 
       return () => {
-        socket.off("gamesettings");
-        socket.off("gamedata");
-        socket.off("gamestate");
+        socket.off("snapshot");
+        socket.off("gamestate_update");
+        socket.off("gameprops_update");
       };
     }
   }, [socket]);
@@ -56,42 +61,68 @@ const Game = () => {
   }
 
   let Dash;
-  if (gameState == 1) {
-    Dash = (
-      <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-        <div className="flex flex-col flex-grow gap-2">
-          <div className="border-white border-2">
-            <Orderbook book={orderbook} bookLim={bookLim} />
+  switch (gameState) {
+    case 0:
+      Dash = (
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+            <div className="border-white border-2 w-full">
+              <Lobby />
+            </div>
           </div>
-          <div className="flex-grow border-white border-2 p-10">
-            <Graph />
-          </div>
-        </div>
-        <div className="flex flex-col flex-grow gap-2">
-          <div className="h-[30em] border-white border-2 overflow-scroll">
+          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
             <News admin={false} />
           </div>
-          <div className="flex-grow border-white border-2">
-            <Inventory />
+        </div>
+      );
+      break;
+    case 1:
+      Dash = (
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex flex-col flex-grow gap-2">
+            <div className="border-white border-2">
+              <Orderbook book={orderbook} bookLim={bookLim} />
+            </div>
+            <div className="flex-grow border-white border-2 p-10">
+              <Graph />
+            </div>
+          </div>
+          <div className="flex flex-col flex-grow gap-2">
+            <div className="h-[30em] border-white border-2 overflow-scroll">
+              <News admin={false} />
+            </div>
+            <div className="flex-grow border-white border-2">
+              <Inventory />
+            </div>
           </div>
         </div>
-      </div>
-    );
-  } else if (gameState == 2) {
-    Dash = 5;
-  } else {
-    Dash = (
-      <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-        <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
-          <div className="border-white border-2 w-full">
-            <Lobby />
+      );
+      break;
+    case 2:
+      Dash = (
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+            <div className="border-white border-2 w-full">
+              <Resolution />
+            </div>
+          </div>
+          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
+            <News admin={false} />
           </div>
         </div>
-        <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
-          <News admin={false} />
+      );
+      break;
+    case 3:
+      Dash = (
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+            <div className="border-white border-2 w-full">
+              <Leaderboard />
+            </div>
+          </div>
         </div>
-      </div>
-    );
+      );
+      break;
   }
 
   return (

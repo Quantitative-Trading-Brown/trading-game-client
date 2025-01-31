@@ -8,19 +8,22 @@ const generateBook = (bookLim) => {
   })).reduce((acc, curr) => Object.assign(acc, curr), {});
 };
 
-
 const Orderbook = ({ book, bookLim }) => {
-  const [selectedSecurity, setSelectedSecurity] = useState(
-    "Test Security",
-  );
+  const [selectedSecurity, setSelectedSecurity] = useState("Test Security");
   const [bidAskQuantity, setBidAskQuantity] = useState(1);
-  const [orderbook, setOrderbook] = useState(generateBook(bookLim));
+  const [orderbook, setOrderbook] = useState([0, 0]);
   const { socket } = useSocket();
+
+  useEffect(() => {
+    setOrderbook(generateBook(bookLim));
+  }, [bookLim]);
 
   useEffect(() => {
     if (socket) {
       socket.on("orderbook", (msg: string) => {
-        setOrderbook(existing => {return {...existing, ...msg}});
+        setOrderbook((existing) => {
+          return { ...existing, ...msg };
+        });
       });
 
       return () => {
@@ -31,15 +34,16 @@ const Orderbook = ({ book, bookLim }) => {
 
   // On refresh, load the starting state of the orderbook
   useEffect(() => {
-    setOrderbook(existing => {return {...existing, ...book}});
-  }, [])
+    setOrderbook((existing) => {
+      return { ...existing, ...book };
+    });
+  }, []);
 
   const handleSecurityChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedSecurity(event.target.value);
   };
-
 
   return (
     <div className="flex flex-col h-full">
@@ -66,25 +70,27 @@ const Orderbook = ({ book, bookLim }) => {
         <table className="table-auto border-collapse w-full">
           <thead className="outline outline-1 outline-offset-0 outline-red sticky top-0">
             <tr className="bg-black">
-              <th className="text-left px-4 py-2">
-                Price
-              </th>
-              <th className="text-left px-4 py-2">
-                Bid Vol
-              </th>
-              <th className="text-left px-4 py-2">
-                Ask Vol
-              </th>
+              <th className="text-left px-4 py-2">Price</th>
+              <th className="text-left px-4 py-2">Bid Vol</th>
+              <th className="text-left px-4 py-2">Ask Vol</th>
             </tr>
           </thead>
           <tbody className="border-separate">
-            {Object.entries(orderbook).toReversed().map(([price, vol]) => (
-              <tr key={price} className="border-b border-gray-300">
-                <td className="px-4 h-10">{price}</td>
-                <td className={"px-4 h-10" + (vol > 0 ? " bg-green-700" : "")}>{Math.max(vol, 0)}</td>
-                <td className={"px-4 h-10" + (vol < 0 ? " bg-red-700" : "")}>{-Math.min(vol, 0)}</td>
-              </tr>
-            ))}
+            {Object.entries(orderbook)
+              .toReversed()
+              .map(([price, vol]) => (
+                <tr key={price} className="border-b border-gray-300">
+                  <td className="px-4 h-10">{price}</td>
+                  <td
+                    className={"px-4 h-10" + (vol > 0 ? " bg-green-700" : "")}
+                  >
+                    {Math.max(vol, 0)}
+                  </td>
+                  <td className={"px-4 h-10" + (vol < 0 ? " bg-red-700" : "")}>
+                    {-Math.min(vol, 0)}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
