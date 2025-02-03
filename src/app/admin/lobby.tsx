@@ -8,25 +8,23 @@ const Lobby = () => {
   const { socket } = useSocket();
 
   const handleBookMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(
-      Math.max(0, Math.min(1e3, Number(event.target.value))),
-    );
-    setSettings(state => {
-      return {...state, "bookMin": value};
+    let value = Math.max(0, Math.min(1e3, Number(event.target.value)));
+    setSettings((state) => {
+      return { ...state, bookMin: value };
     });
   };
 
   const handleBookMaxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(
-      Math.max(0, Math.min(1e3, Number(event.target.value))),
-    );
-    setSettings(state => {
-      return {...state, "bookMax": value};
+    let value = Math.max(0, Math.min(1e3, Number(event.target.value)));
+    setSettings((state) => {
+      return { ...state, bookMax: value };
     });
   };
 
-  const handleGameStart = (event) => {
-    socket.emit("startgame", settings);
+  const handleGameStart = () => {
+    if (socket) {
+      socket.emit("startgame", settings);
+    }
   };
 
   return (

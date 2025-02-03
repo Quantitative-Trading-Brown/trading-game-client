@@ -8,10 +8,10 @@ import Game from "./game";
 
 const AdminPage = () => {
   const [code, setCode] = useState<string | null>(null);
-  const [authenticated, setAuthenticated] = useState<string | null>(false);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
   const router = useRouter();
 
-  const setup = async (token) => {
+  const setup = async (token: string | null) => {
     if (!token) {
       router.push("/");
     }
@@ -48,7 +48,7 @@ const AdminPage = () => {
   return (
     <SocketProvider
       namespace="admin"
-      query={{ token: localStorage.getItem("admin_token") }}
+      query={{ token: localStorage.getItem("admin_token") || "" }}
     >
       <Game />
     </SocketProvider>

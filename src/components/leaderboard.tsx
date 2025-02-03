@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-const Leaderboard = ({ admin }) => {
+const Leaderboard = () => {
   const [rankings, setRankings] = useState([]);
   const { socket } = useSocket();
 

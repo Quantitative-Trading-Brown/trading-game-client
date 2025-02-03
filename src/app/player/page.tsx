@@ -13,7 +13,7 @@ const PlayerPage = () => {
 
   const router = useRouter();
 
-  const setup = async (token) => {
+  const setup = async (token: string) => {
     if (!token) {
       router.push("/");
     }
@@ -38,7 +38,7 @@ const PlayerPage = () => {
 
   useEffect(() => {
     const storedCode = localStorage.getItem("player_code");
-    const storedToken = localStorage.getItem("player_token");
+    const storedToken = localStorage.getItem("player_token") || "";
     setup(storedToken);
   }, []);
 
@@ -49,7 +49,7 @@ const PlayerPage = () => {
   return (
     <SocketProvider
       namespace="player"
-      query={{ token: localStorage.getItem("player_token") }}
+      query={{ token: localStorage.getItem("player_token") || "" }}
     >
       <Game />
     </SocketProvider>

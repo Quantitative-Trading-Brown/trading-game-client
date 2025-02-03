@@ -21,10 +21,10 @@ ChartJS.register(
   Tooltip,
 );
 
-const Graph = (props: { security: string }) => {
+const Graph = () => {
   const { socket } = useSocket();
-  const [data, setData] = useState([]);
-  const [labels, setLabels] = useState([]);
+  const [data, setData] = useState<number[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
 
   const chartData = {
     labels: labels,
@@ -45,7 +45,7 @@ const Graph = (props: { security: string }) => {
     maintainAspectRatio: false, // Disable aspect ratio to use parent height
     plugins: {
       tooltip: {
-        mode: "nearest",
+        // mode: "nearest",
         intersect: false,
       },
     },
@@ -63,14 +63,14 @@ const Graph = (props: { security: string }) => {
       },
     },
   };
-  const updateChart = (label, y) => {
+  const updateChart = (label: string, y: number) => {
     setLabels((prevLabels) => [...prevLabels, label]);
     setData((prevData) => [...prevData, y]); // New data
   };
 
   useEffect(() => {
     if (socket) {
-      socket.on("price", (price: int) => {
+      socket.on("price", (price: number) => {
         var d = new Date();
         var n = d.toLocaleTimeString();
         updateChart(n, price);

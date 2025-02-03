@@ -15,7 +15,10 @@
 /* } */
 
 body {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Bebas Neue', Arial, Helvetica, sans-serif;
+  font-family: "Bebas Neue", Arial, Helvetica, sans-serif;
 }

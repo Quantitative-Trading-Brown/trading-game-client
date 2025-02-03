@@ -6,23 +6,10 @@ const Controls = () => {
   const [paused, setPaused] = useState({});
   const { socket } = useSocket();
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on("gamestate", (update) => {
-  //       setInventory((state) => {
-  //         return { ...state, ...update };
-  //       });
-  //     });
-
-  //     return () => {
-  //       socket.off("inventory");
-  //     };
-  //   }
-  // }, [socket]);
-  //
-
   const handleEndGame = () => {
-    socket.emit("endgame");
+    if (socket) {
+      socket.emit("endgame");
+    }
   }
 
   return (

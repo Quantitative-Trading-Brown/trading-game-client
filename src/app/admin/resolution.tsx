@@ -8,16 +8,16 @@ const Resolution = () => {
   const { socket } = useSocket();
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(
-      Math.max(0, Math.min(1e3, Number(event.target.value))),
-    );
-    setPrices(state => {
-      return {...state, "security": value};
+    let value = Math.max(0, Math.min(1e3, Number(event.target.value)));
+    setPrices((state) => {
+      return { ...state, security: value };
     });
   };
 
-  const handleResolved = (event) => {
-    socket.emit("rankgame", prices);
+  const handleResolved = () => {
+    if (socket) {
+      socket.emit("rankgame", prices);
+    }
   };
 
   return (

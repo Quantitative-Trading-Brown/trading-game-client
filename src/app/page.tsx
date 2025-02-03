@@ -2,15 +2,17 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
-import db from "@/scripts/firestore";
 import axios from "axios";
 
+import db from "@/scripts/firestore";
+import { gameProps } from "@/utils/Types";
+
 const Home = () => {
-  const [backend, setBackend] = useState(localStorage.getItem("backend_ip") || "");
+  const [backend, setBackend] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [status, setStatus] = useState("");
-  const [sponsors, setSponsors] = useState({});
+  const [sponsors, setSponsors] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +28,7 @@ const Home = () => {
       }
     };
 
+    setBackend(localStorage.getItem("backend_ip") || "");
     fetchData();
   }, []);
 
@@ -39,7 +42,7 @@ const Home = () => {
       localStorage.setItem("admin_token", response.data.token);
       setStatus("Game created successfully!");
       window.location.href = "/admin";
-    } catch (err) {
+    } catch (err: any) {
       if (err.response) {
         setStatus(`Error creating game: ${err.response}`);
       } else {
@@ -66,7 +69,7 @@ const Home = () => {
       localStorage.setItem("player_token", response.data.token);
       setStatus("Joined game successfully!");
       window.location.href = "/player";
-    } catch (err) {
+    } catch (err: any) {
       if (err.response) {
         setStatus(`Error creating game: ${err.response.data.error}`);
       } else {
@@ -135,14 +138,16 @@ const Home = () => {
           <p className="text-center mt-4 text-sm text-gray-400">{status}</p>
         </div>
       </div>
-      <div className="absolute bottom-[1em]">
-        <div className="overflow-hidden whitespace-nowrap justify-center flex relative py-[2em]">
-          <div className="flex animate-marquee">
-            <img src={sponsors} />
-            <img src={sponsors} />
+      {sponsors ? (
+        <div className="absolute bottom-[1em]">
+          <div className="overflow-hidden whitespace-nowrap justify-center flex relative py-[2em]">
+            <div className="flex animate-marquee">
+              <img src={sponsors} />
+              <img src={sponsors} />
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };

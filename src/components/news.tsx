@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-const News = ({ admin }) => {
-  const [messages, setMessages] = useState([]);
-  const [buffer, setBuffer] = useState([]);
+const News = ({ admin } : { admin: boolean }) => {
+  const [messages, setMessages] = useState<[string, string][]>([]);
+  const [buffer, setBuffer] = useState("");
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -21,10 +21,10 @@ const News = ({ admin }) => {
     }
   }, [socket]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (buffer.trim()) {
+      if (buffer.trim() && socket) {
         socket.emit("news", buffer);
         setBuffer("");
       }
@@ -36,7 +36,7 @@ const News = ({ admin }) => {
       <h2 className="text-lg font-bold mb-4">Market News</h2>
       <div className="flex-grow space-y-2 overflow-y-auto">
         {messages.map((data, index) => (
-          <div key={index} className="flex justify-between items-center gaps-5">
+          <div key={index} className="flex justify-between items-center">
             <p className="text-sm text-gray-300">{data[0]}</p>
             <span className="text-xs text-gray-500">{data[1]}</span>
           </div>

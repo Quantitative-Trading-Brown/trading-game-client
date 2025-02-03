@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { useSocket } from "@/contexts/SocketContext";
+import { gameProps } from "@/utils/Types"
 
+import Orderbook from "@/components/orderbook";
 import News from "@/components/news";
 import Leaderboard from "@/components/leaderboard";
 import Graph from "@/components/graph";
 
-import Orderbook from "./orderbook";
 import Lobby from "./lobby";
 import Controls from "./controls";
 import Resolution from "./resolution";
@@ -17,7 +18,7 @@ import Resolution from "./resolution";
 const Game = () => {
   const [orderbook, setOrderbook] = useState({});
   const [bookLim, setBookLim] = useState([0, 0]);
-  const [code, setCode] = useState(null);
+  const [code, setCode] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [gameState, setGameState] = useState<number>(0);
@@ -25,12 +26,12 @@ const Game = () => {
 
   const { socket } = useSocket();
 
-  const updateProps = (props) => {
+  const updateProps = (props: gameProps) => {
     setBookLim([Number(props.bookMin), Number(props.bookMax)]);
     setCode(props.code)
   };
 
-  const updateState = (state) => {
+  const updateState = (state: string) => {
     setGameState(Number(state));
     setLoading(false);
   };
@@ -64,13 +65,13 @@ const Game = () => {
   switch (gameState) {
     case 0:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
               <Lobby />
             </div>
           </div>
-          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
+          <div className="border-white border-2 w-[40em] overflow-y-auto">
             <News admin={true} />
           </div>
         </div>
@@ -78,17 +79,17 @@ const Game = () => {
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-col flex-grow gap-2">
             <div className="border-white border-2">
-              <Orderbook book={orderbook} bookLim={bookLim} />
+              <Orderbook admin={true} book={orderbook} bookLim={bookLim} />
             </div>
             <div className="flex-grow border-white border-2 p-10">
               <Graph />
             </div>
           </div>
           <div className="flex flex-col flex-grow gap-2">
-            <div className="flex-grow border-white border-2 overflow-scroll overscroll-contain">
+            <div className="flex-grow border-white border-2 overflow-y-auto">
               <News admin={true} />
             </div>
             <div className="border-white border-2">
@@ -100,13 +101,13 @@ const Game = () => {
       break;
     case 2:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
               <Resolution />
             </div>
           </div>
-          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
+          <div className="border-white border-2 w-[30em] overflow-y-auto">
             <News admin={true} />
           </div>
         </div>
@@ -114,7 +115,7 @@ const Game = () => {
       break;
     case 3:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
               <Leaderboard />

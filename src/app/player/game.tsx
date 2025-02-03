@@ -5,11 +5,11 @@ import axios from "axios";
 
 import { useSocket } from "@/contexts/SocketContext";
 
+import Orderbook from "@/components/orderbook";
 import News from "@/components/news";
 import Graph from "@/components/graph";
 import Leaderboard from "@/components/leaderboard";
 
-import Orderbook from "./orderbook";
 import Lobby from "./lobby";
 import Inventory from "./inventory";
 import Resolution from "./resolution";
@@ -25,11 +25,11 @@ const Game = () => {
 
   const { socket } = useSocket();
 
-  const updateProps = (props) => {
+  const updateProps = (props: {[key: string]: string}) => {
     setBookLim([Number(props.bookMin), Number(props.bookMax)]);
   };
 
-  const updateState = (state) => {
+  const updateState = (state: number) => {
     setGameState(Number(state));
     setLoading(false);
   };
@@ -70,7 +70,7 @@ const Game = () => {
               <Lobby />
             </div>
           </div>
-          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
+          <div className="border-white border-2 w-[30em] overflow-y-auto overscroll-contain">
             <News admin={false} />
           </div>
         </div>
@@ -78,17 +78,17 @@ const Game = () => {
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-col flex-grow gap-2">
             <div className="border-white border-2">
-              <Orderbook book={orderbook} bookLim={bookLim} />
+              <Orderbook admin={false} book={orderbook} bookLim={bookLim} />
             </div>
             <div className="flex-grow border-white border-2 p-10">
               <Graph />
             </div>
           </div>
           <div className="flex flex-col flex-grow gap-2">
-            <div className="h-[30em] border-white border-2 overflow-scroll">
+            <div className="h-[30em] border-white border-2 overflow-y-auto">
               <News admin={false} />
             </div>
             <div className="flex-grow border-white border-2">
