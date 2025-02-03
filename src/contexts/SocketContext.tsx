@@ -18,7 +18,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, namesp
 
   useEffect(() => {
     // Initialize the socket with the specified namespace and query parameters
-    const newSocket = io(`${localStorage.getItem("backend_ip")}/${namespace}`, { query });
+    const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${namespace}`, { query });
 
     newSocket.on('connect', () => {
       console.log(`[${namespace}] Connected with SID:`, newSocket.id);

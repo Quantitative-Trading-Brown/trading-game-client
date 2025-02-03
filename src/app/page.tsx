@@ -8,7 +8,6 @@ import db from "@/scripts/firestore";
 import { gameProps } from "@/utils/Types";
 
 const Home = () => {
-  const [backend, setBackend] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [status, setStatus] = useState("");
@@ -28,15 +27,13 @@ const Home = () => {
       }
     };
 
-    setBackend(localStorage.getItem("backend_ip") || "");
     fetchData();
   }, []);
 
   const createGame = async () => {
-    localStorage.setItem("backend_ip", backend);
     try {
       const response = await axios.post(
-        `${localStorage.getItem("backend_ip")}/create-game`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/create-game`,
       );
       localStorage.setItem("admin_code", response.data.code);
       localStorage.setItem("admin_token", response.data.token);
@@ -52,14 +49,13 @@ const Home = () => {
   };
 
   const joinGame = async () => {
-    localStorage.setItem("backend_ip", backend);
     if (!playerName) {
       setStatus("Username must be non-empty");
       return;
     }
     try {
       const response = await axios.post(
-        `${localStorage.getItem("backend_ip")}/join-game`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/join-game`,
         {
           code: gameCode,
           playerName,
@@ -85,21 +81,10 @@ const Home = () => {
     >
       <div
         className="space-y-8 max-w-[35em] w-full ml-8 p-8 
-        bg-gray-800 shadow-lg border border-l-0 border-gray-700"
+        bg-gray-800 shadow-lg border border-gray-700"
       >
         <h1 className="text-4xl font-semibold pl-4">QTAB Trading Simulator</h1>
         <div className="flex flex-col space-y-6">
-          <div className="flex flex-col space-y-6">
-            <input
-              type="text"
-              placeholder="Enter backend IP address"
-              value={backend}
-              onChange={(e) => setBackend(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg 
-              border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <hr className="border-gray-600" />
           <button
             onClick={createGame}
             className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg 
