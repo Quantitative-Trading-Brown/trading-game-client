@@ -4,20 +4,20 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { useSocket } from "@/contexts/SocketContext";
-import { gameProps } from "@/utils/Types"
+import { GameProps } from "@/utils/Types"
 
-import Orderbook from "@/components/orderbook";
-import News from "@/components/news";
-import Leaderboard from "@/components/leaderboard";
-import Graph from "@/components/graph";
+import OrderbookCell from "@/components/orderbook";
+import NewsCell from "@/components/news";
+import LeaderboardCell from "@/components/leaderboard";
+import GraphCell from "@/components/graph";
 
-import Lobby from "./lobby";
-import Controls from "./controls";
-import Resolution from "./resolution";
+import LobbyCell from "./lobby";
+import ControlsCell from "./controls";
+import ResolutionCell from "./resolution";
 
 const Game = () => {
-  const [orderbook, setOrderbook] = useState({});
-  const [bookLim, setBookLim] = useState([0, 0]);
+  const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
+  const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
   const [code, setCode] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -26,9 +26,12 @@ const Game = () => {
 
   const { socket } = useSocket();
 
-  const updateProps = (props: gameProps) => {
-    setBookLim([Number(props.bookMin), Number(props.bookMax)]);
+  const updateProps = (props: GameProps) => {
     setCode(props.code)
+  };
+
+  const updateSecurities = (securities: SecurityProps) => {
+    setSecurities(securities);
   };
 
   const updateState = (state: string) => {
@@ -39,13 +42,16 @@ const Game = () => {
   useEffect(() => {
     if (socket) {
       socket.on("snapshot", (snapshot) => {
-        setOrderbook(snapshot.orderbook);
-        updateProps(snapshot.game_props);
+        setOrderbooks(snapshot.orderbooks);
         updateState(snapshot.game_state);
+        updateProps(snapshot.game_props);
+        updateSecurities(snapshot.securities);
       });
 
       socket.on("gamestate_update", updateState);
       socket.on("gameprops_update", updateProps);
+
+      socket.on("securities_update", updateSecurities);
 
       socket.emit("snapshot");
 
@@ -53,6 +59,7 @@ const Game = () => {
         socket.off("snapshot");
         socket.off("gamestate_update");
         socket.off("gameprops_update");
+        socket.off("securities_update");
       };
     }
   }, [socket]);
@@ -68,11 +75,11 @@ const Game = () => {
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
-              <Lobby />
+              <LobbyCell />
             </div>
           </div>
           <div className="border-white border-2 w-[40em] overflow-y-auto">
-            <News admin={true} />
+            <NewsCell admin={true} />
           </div>
         </div>
       );
@@ -82,18 +89,18 @@ const Game = () => {
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-col flex-grow gap-2">
             <div className="border-white border-2">
-              <Orderbook admin={true} book={orderbook} bookLim={bookLim} />
+              <OrderbookCell admin={true} books={orderbooks} securities={securities} />
             </div>
             <div className="flex-grow border-white border-2 p-10">
-              <Graph />
+              <GraphCell />
             </div>
           </div>
           <div className="flex flex-col flex-grow gap-2">
             <div className="flex-grow border-white border-2 overflow-y-auto">
-              <News admin={true} />
+              <NewsCell admin={true} />
             </div>
             <div className="border-white border-2">
-              <Controls />
+              <ControlsCell />
             </div>
           </div>
         </div>
@@ -104,11 +111,11 @@ const Game = () => {
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
-              <Resolution />
+              <ResolutionCell securities={securities}/>
             </div>
           </div>
           <div className="border-white border-2 w-[30em] overflow-y-auto">
-            <News admin={true} />
+            <NewsCell admin={true} />
           </div>
         </div>
       );
@@ -118,7 +125,7 @@ const Game = () => {
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
-              <Leaderboard />
+              <LeaderboardCell />
             </div>
           </div>
         </div>

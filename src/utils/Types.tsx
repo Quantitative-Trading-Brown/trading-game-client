@@ -1,11 +1,17 @@
-type gameProps = {
-  bookMin: number,
-  bookMax: number,
-  code: string,
-}
+type GameProps = {
+  code: string;
+};
 
-type orderbook = {
-  [key: number]: number
-}
+type SecurityProps = {
+  [key: number]: {
+    name: string;
+    bookMin: number;
+    bookMax: number;
+  };
+};
 
-export type {gameProps, orderbook};
+type Orderbook = {
+  [key: number]: number;
+};
+
+export type { gameProps, securityProps, orderbook };

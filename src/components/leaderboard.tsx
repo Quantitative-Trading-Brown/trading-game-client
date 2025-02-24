@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-const Leaderboard = () => {
+const LeaderboardCell = () => {
   const [rankings, setRankings] = useState([]);
   const { socket } = useSocket();
 
@@ -44,4 +44,4 @@ const Leaderboard = () => {
   );
 };
 
-export default Leaderboard;
+export default LeaderboardCell;
