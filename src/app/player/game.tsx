@@ -89,14 +89,11 @@ const Game = () => {
       Dash = (
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-col flex-grow gap-2">
-            <div className="border-white border-2">
-              <OrderbookCell admin={false} books={orderbooks} securities={securities} />
-            </div>
-            <div className="flex-grow border-white border-2 p-10">
-              <GraphCell />
+            <div className="border-white border-2 h-full">
+              <OrderbookCell admin={false} orderbooks={orderbooks} securities={securities} />
             </div>
           </div>
-          <div className="flex flex-col flex-grow gap-2">
+          <div className="flex flex-col gap-2">
             <div className="h-[30em] border-white border-2 overflow-y-auto">
               <NewsCell admin={false} />
             </div>

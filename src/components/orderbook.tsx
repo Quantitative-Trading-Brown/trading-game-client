@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 import { Orderbook, SecurityProps } from "@/utils/Types";
+import GraphCell from "@/components/graph";
 
 const generateBooks = (securities: SecurityProps) => {
   const bookLimits = Object.entries(securities).reduce(
@@ -38,7 +39,7 @@ const OrderbookCell = (props: OrderbookProps) => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    setOrderbooks(generateBooks(props.securities));
+    setOrderbooks((existing) => generateBooks(props.securities));
   }, [props.securities]);
 
   useEffect(() => {
@@ -60,9 +61,21 @@ const OrderbookCell = (props: OrderbookProps) => {
 
   // On refresh, load the starting state of the orderbook
   useEffect(() => {
-    setOrderbooks((existing) => {
-      return { ...existing, ...props.orderbooks };
-    });
+    if (props.orderbooks) {
+      setOrderbooks((existing) => {
+        const updatedOrderbooks = { ...existing };
+
+        // Merge each security's updates into the existing orderbook
+        for (const security in props.orderbooks) {
+          updatedOrderbooks[security] = {
+            ...existing[security],
+            ...props.orderbooks[security],
+          };
+        }
+
+        return updatedOrderbooks;
+      });
+    }
   }, []);
 
   const handleSecurityChange = (
@@ -80,7 +93,13 @@ const OrderbookCell = (props: OrderbookProps) => {
     // Handle bid and ask orders
     // console.log(`${order_type} ${bidAskQuantity} at ${price}`);
     if (socket) {
-      socket.emit("order", selectedSecurity, order_type, Number(price), bidAskQuantity);
+      socket.emit(
+        "order",
+        selectedSecurity,
+        order_type,
+        Number(price),
+        bidAskQuantity,
+      );
     }
   };
   const handleCancelOrder = (price: number) => {
@@ -101,7 +120,7 @@ const OrderbookCell = (props: OrderbookProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex gap-10 justify-center items-center px-8 py-5">
-        <div className="w-[30em] flex items-center">
+        <div className="flex flex-1 items-center">
           <label htmlFor="security-select" className="mr-2">
             Select Security:{" "}
           </label>
@@ -127,16 +146,16 @@ const OrderbookCell = (props: OrderbookProps) => {
               id="bid-ask-quantity"
               type="number"
               onChange={handleBidAskQuantityChange}
-              className="px-2 py-1 bg-gray-700"
+              className="px-2 py-1 bg-gray-700 w-[5em]"
             />
           </div>
         ) : null}
         {!props.admin ? (
           <button
             onClick={handleCancelAllOrders}
-            className="px-2 py-1 h-10 bg-gray-500 text-white shadow 
-          border-gray-500 active:border-l-[2px] active:border-t-[2px]
-          hover:bg-red-600 flex-grow"
+            className="w-[15em] px-2 py-1 h-10 bg-gray-500 text-white shadow 
+          border-black active:border-l-[2px] active:border-t-[2px]
+          hover:bg-red-600"
           >
             Cancel All Orders
           </button>
@@ -174,8 +193,8 @@ const OrderbookCell = (props: OrderbookProps) => {
                           <button
                             onClick={() => handleOrder("BUY", price)}
                             className="bg-gray-500 w-full h-full
-                    border-gray-500 active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600 truncate"
+                    border-blue-600 active:border-l-[2px] active:border-t-[2px]
+                    hover:bg-blue-600 truncate"
                           >
                             Buy {bidAskQuantity}
                           </button>
@@ -186,8 +205,8 @@ const OrderbookCell = (props: OrderbookProps) => {
                           <button
                             onClick={() => handleOrder("SELL", price)}
                             className="bg-gray-500 w-full h-full 
-                    border-gray-500 active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600 truncate"
+                    border-blue-600 active:border-l-[2px] active:border-t-[2px]
+                    hover:bg-blue-600 truncate"
                           >
                             Sell {bidAskQuantity}
                           </button>
@@ -198,8 +217,8 @@ const OrderbookCell = (props: OrderbookProps) => {
                           <button
                             onClick={() => handleCancelOrder(price)}
                             className="bg-gray-500 w-full h-full 
-                    active:border-l-[2px] active:border-t-[2px]
-                    text-white hover:bg-blue-600"
+                    border-blue-600 active:border-l-[2px] active:border-t-[2px]
+                    hover:bg-blue-600"
                           >
                             Cancel
                           </button>
@@ -210,6 +229,9 @@ const OrderbookCell = (props: OrderbookProps) => {
               : null}
           </tbody>
         </table>
+      </div>
+      <div className="flex-grow p-5">
+        <GraphCell selected={selectedSecurity} />
       </div>
     </div>
   );

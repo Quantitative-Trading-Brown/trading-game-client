@@ -41,7 +41,6 @@ const Inventory = (props: InventoryProps) => {
       };
     }
   }, [socket]);
-  console.log(inventory);
 
   return (
     <div className="flex flex-col text-white p-4 max-w-lg w-[30em] mx-auto rounded-lg shadow-lg">

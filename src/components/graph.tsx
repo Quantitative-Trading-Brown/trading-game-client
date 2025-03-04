@@ -21,17 +21,22 @@ ChartJS.register(
   Tooltip,
 );
 
-const Graph = () => {
+type GraphProps = {
+  selected: number,
+}
+
+const Graph = (props: GraphProps) => {
   const { socket } = useSocket();
-  const [data, setData] = useState<number[]>([]);
-  const [labels, setLabels] = useState<string[]>([]);
+  const [securityData, setSecurityData] = useState({});
+  const [timeLabels, setTimeLabels] = useState<string[]>([]);
+  console.log(props)
 
   const chartData = {
-    labels: labels,
+    labels: timeLabels[props.selected],
     datasets: [
       {
         label: "Price",
-        data: data,
+        data: securityData[props.selected],
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderWidth: 2,
@@ -63,17 +68,34 @@ const Graph = () => {
       },
     },
   };
-  const updateChart = (label: string, y: number) => {
-    setLabels((prevLabels) => [...prevLabels, label]);
-    setData((prevData) => [...prevData, y]); // New data
+  const updateChart = (security: number, label: string, y: number) => {
+    setTimeLabels((prevLabels) => {
+      const updatedLabels = [...(prevLabels[security] || []), label];
+
+      // Trim to keep only the last 30 elements
+      return {
+        ...prevLabels,
+        [security]: updatedLabels.slice(-30),
+      };
+    });
+
+    setSecurityData((prevData) => {
+      const updatedData = [...(prevData[security] || []), y];
+
+      // Trim to keep only the last 30 elements
+      return {
+        ...prevData,
+        [security]: updatedData.slice(-30),
+      };
+    });
   };
 
   useEffect(() => {
     if (socket) {
-      socket.on("price", (price: number) => {
+      socket.on("price", (security: number, price: number) => {
         var d = new Date();
         var n = d.toLocaleTimeString();
-        updateChart(n, price);
+        updateChart(security, n, price);
       });
 
       return () => {
@@ -82,7 +104,13 @@ const Graph = () => {
     }
   }, [socket]);
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-grow h-0">
+        <Line data={chartData} options={options} className="h-full"/>
+      </div>
+    </div>
+  );
 };
 
 export default Graph;

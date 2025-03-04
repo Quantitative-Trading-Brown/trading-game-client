@@ -9,7 +9,6 @@ import { GameProps } from "@/utils/Types"
 import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
-import GraphCell from "@/components/graph";
 
 import LobbyCell from "./lobby";
 import ControlsCell from "./controls";
@@ -88,11 +87,8 @@ const Game = () => {
       Dash = (
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-col flex-grow gap-2">
-            <div className="border-white border-2">
-              <OrderbookCell admin={true} books={orderbooks} securities={securities} />
-            </div>
-            <div className="flex-grow border-white border-2 p-10">
-              <GraphCell />
+            <div className="border-white border-2 h-full">
+              <OrderbookCell admin={true} orderbooks={orderbooks} securities={securities} />
             </div>
           </div>
           <div className="flex flex-col flex-grow gap-2">
