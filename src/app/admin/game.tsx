@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { useSocket } from "@/contexts/SocketContext";
-import { GameProps } from "@/utils/Types"
+import { GameProps, SecurityProps } from "@/utils/Types"
 
 import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";

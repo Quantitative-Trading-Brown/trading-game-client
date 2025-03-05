@@ -22,14 +22,21 @@ ChartJS.register(
 );
 
 type GraphProps = {
-  selected: number,
-}
+  selected: number;
+};
+
+type PriceVals = {
+  [key: number]: number[];
+};
+type TimeVals = {
+  [key: number]: string[];
+};
 
 const Graph = (props: GraphProps) => {
   const { socket } = useSocket();
-  const [securityData, setSecurityData] = useState({});
-  const [timeLabels, setTimeLabels] = useState<string[]>([]);
-  console.log(props)
+  const [securityData, setSecurityData] = useState<PriceVals>({});
+  const [timeLabels, setTimeLabels] = useState<TimeVals>({});
+  console.log(props);
 
   const chartData = {
     labels: timeLabels[props.selected],
@@ -107,7 +114,7 @@ const Graph = (props: GraphProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-grow h-0">
-        <Line data={chartData} options={options} className="h-full"/>
+        <Line data={chartData} options={options} className="h-full" />
       </div>
     </div>
   );

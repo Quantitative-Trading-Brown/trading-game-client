@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
-import { Orderbook, SecurityProps } from "@/utils/Types";
+import { Orderbook, Orderbooks, SecurityProps } from "@/utils/Types";
 import GraphCell from "@/components/graph";
 
 const generateBooks = (securities: SecurityProps) => {
@@ -18,7 +18,7 @@ const generateBooks = (securities: SecurityProps) => {
       ).reduce((acc, curr) => Object.assign(acc, curr), {});
 
       // Assign the generated object under the security key
-      acc[key] = bookObject;
+      acc[Number(key)] = bookObject;
       return acc;
     },
     {} as { [key: number]: { [bookValue: number]: number } },
@@ -35,17 +35,17 @@ type OrderbookProps = {
 const OrderbookCell = (props: OrderbookProps) => {
   const [selectedSecurity, setSelectedSecurity] = useState(1);
   const [bidAskQuantity, setBidAskQuantity] = useState(1);
-  const [orderbooks, setOrderbooks] = useState({});
+  const [orderbooks, setOrderbooks] = useState<Orderbooks>({});
   const { socket } = useSocket();
 
   useEffect(() => {
-    setOrderbooks((existing) => generateBooks(props.securities));
+    setOrderbooks((existing: Orderbooks) => generateBooks(props.securities));
   }, [props.securities]);
 
   useEffect(() => {
     if (socket) {
       socket.on("orderbook", (security: number, updates: Orderbook) => {
-        setOrderbooks((existing) => {
+        setOrderbooks((existing: Orderbooks) => {
           return {
             ...existing,
             [security]: { ...existing[security], ...updates },
@@ -62,7 +62,7 @@ const OrderbookCell = (props: OrderbookProps) => {
   // On refresh, load the starting state of the orderbook
   useEffect(() => {
     if (props.orderbooks) {
-      setOrderbooks((existing) => {
+      setOrderbooks((existing: Orderbooks) => {
         const updatedOrderbooks = { ...existing };
 
         // Merge each security's updates into the existing orderbook
@@ -81,7 +81,7 @@ const OrderbookCell = (props: OrderbookProps) => {
   const handleSecurityChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    setSelectedSecurity(event.target.value);
+    setSelectedSecurity(Number(event.target.value));
   };
 
   const handleBidAskQuantityChange = (
@@ -139,9 +139,7 @@ const OrderbookCell = (props: OrderbookProps) => {
         </div>
         {!props.admin ? (
           <div className="">
-            <span htmlFor="bid-ask-quantity" className="mr-2">
-              Bid/Ask Quantity:{" "}
-            </span>
+            <span className="mr-2">Bid/Ask Quantity: </span>
             <input
               id="bid-ask-quantity"
               type="number"

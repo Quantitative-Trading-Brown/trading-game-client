@@ -18,14 +18,14 @@ const Lobby = () => {
     };
     setSecurities([...securities, newSecurity]);
   };
-  const deleteSecurity = (id) => {
+  const deleteSecurity = (id: number) => {
     const updatedSecurities = securities.filter(
       (security) => security.id !== id,
     );
     setSecurities(updatedSecurities);
   };
 
-  const handleInputChange = (id, field, value) => {
+  const handleInputChange = (id: number, field: string, value: string) => {
     const updatedSecurities= securities.map((security) =>
       security.id === id ? { ...security, [field]: value } : security,
     );

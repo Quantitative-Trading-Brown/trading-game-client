@@ -5,7 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import axios from "axios";
 
 import db from "@/scripts/firestore";
-import { gameProps } from "@/utils/Types";
+import { GameProps } from "@/utils/Types";
 
 const Home = () => {
   const [gameCode, setGameCode] = useState("");

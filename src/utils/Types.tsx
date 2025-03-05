@@ -14,4 +14,8 @@ type Orderbook = {
   [key: number]: number;
 };
 
-export type { gameProps, securityProps, orderbook };
+type Orderbooks = {
+  [key: number]: Orderbook;
+};
+
+export type { GameProps, SecurityProps, Orderbook, Orderbooks };
