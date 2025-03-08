@@ -36,7 +36,6 @@ const Graph = (props: GraphProps) => {
   const { socket } = useSocket();
   const [securityData, setSecurityData] = useState<PriceVals>({});
   const [timeLabels, setTimeLabels] = useState<TimeVals>({});
-  console.log(props);
 
   const chartData = {
     labels: timeLabels[props.selected],
