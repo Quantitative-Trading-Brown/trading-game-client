@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useSocket } from "@/contexts/SocketContext";
+import { SecurityProps } from "@/utils/Types";
 
 ChartJS.register(
   CategoryScale,
@@ -23,7 +24,7 @@ ChartJS.register(
 
 type GraphProps = {
   selected: number;
-  scale: number;
+  securities: SecurityProps;
 };
 
 type PriceVals = {
@@ -87,7 +88,7 @@ const Graph = (props: GraphProps) => {
     });
 
     setSecurityData((prevData) => {
-      const updatedData = [...(prevData[security] || []), y*props.scale];
+      const updatedData = [...(prevData[security] || []), y*props.securities[security].scale];
 
       // Trim to keep only the last 30 elements
       return {

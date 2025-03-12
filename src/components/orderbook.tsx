@@ -232,7 +232,7 @@ const OrderbookCell = (props: OrderbookProps) => {
         </table>
       </div>
       <div className="flex-grow p-5">
-        <GraphCell selected={selectedSecurity} scale={props.securities[selectedSecurity].scale} />
+        <GraphCell selected={selectedSecurity} securities={props.securities} />
       </div>
     </div>
   );
