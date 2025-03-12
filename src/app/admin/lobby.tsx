@@ -6,7 +6,7 @@ import { useSocket } from "@/contexts/SocketContext";
 const Lobby = () => {
   const { socket } = useSocket();
   const [securities, setSecurities] = useState([
-    { id: 1, name: "", bookMin: "", bookMax: "" },
+    { id: 1, name: "Example", bookMin: "1", bookMax: "10", scale: "5" },
   ]);
 
   const addSecurity = () => {
@@ -15,6 +15,7 @@ const Lobby = () => {
       name: "",
       bookMin: "",
       bookMax: "",
+      scale: ""
     };
     setSecurities([...securities, newSecurity]);
   };
@@ -50,6 +51,7 @@ const Lobby = () => {
               <th className="p-2">Security Name</th>
               <th className="p-2">Book Min</th>
               <th className="p-2">Book Max</th>
+              <th className="p-2">Scale</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
@@ -82,6 +84,16 @@ const Lobby = () => {
                     value={sec.bookMax}
                     onChange={(e) =>
                       handleInputChange(sec.id, "bookMax", e.target.value)
+                    }
+                    className="outline-none bg-gray-700 h-8 w-full p-1"
+                  />
+                </td>
+                <td className="p-1">
+                  <input
+                    type="number"
+                    value={sec.scale}
+                    onChange={(e) =>
+                      handleInputChange(sec.id, "scale", e.target.value)
                     }
                     className="outline-none bg-gray-700 h-8 w-full p-1"
                   />

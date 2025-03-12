@@ -23,6 +23,7 @@ ChartJS.register(
 
 type GraphProps = {
   selected: number;
+  scale: number;
 };
 
 type PriceVals = {
@@ -86,7 +87,7 @@ const Graph = (props: GraphProps) => {
     });
 
     setSecurityData((prevData) => {
-      const updatedData = [...(prevData[security] || []), y];
+      const updatedData = [...(prevData[security] || []), y*props.scale];
 
       // Trim to keep only the last 30 elements
       return {

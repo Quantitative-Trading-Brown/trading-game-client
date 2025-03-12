@@ -7,6 +7,7 @@ type SecurityProps = {
     name: string;
     bookMin: number;
     bookMax: number;
+    scale: number;
   };
 };
 

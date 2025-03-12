@@ -33,7 +33,7 @@ type OrderbookProps = {
 };
 
 const OrderbookCell = (props: OrderbookProps) => {
-  const [selectedSecurity, setSelectedSecurity] = useState(1);
+  const [selectedSecurity, setSelectedSecurity] = useState(Object.keys(props.securities)[0]);
   const [bidAskQuantity, setBidAskQuantity] = useState(1);
   const [orderbooks, setOrderbooks] = useState<Orderbooks>({});
   const { socket } = useSocket();
@@ -116,6 +116,9 @@ const OrderbookCell = (props: OrderbookProps) => {
       socket.emit("cancel_all", selectedSecurity);
     }
   };
+  function compare(a, b) {
+    return Number(a[0]) > Number(b[0]) ? -1 : 1;
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -176,10 +179,10 @@ const OrderbookCell = (props: OrderbookProps) => {
           <tbody className="border-collapse">
             {orderbooks[selectedSecurity]
               ? Object.entries(orderbooks[selectedSecurity])
-                  .toReversed()
+                  .sort(compare)
                   .map(([price, vol]: [any, any]) => (
                     <tr key={price} className="border-b border-gray-300 h-10">
-                      <td className="px-4">{price}</td>
+                      <td className="px-4">{price * props.securities[selectedSecurity].scale}</td>
                       <td className={"px-4" + (vol > 0 ? " bg-green-700" : "")}>
                         {Math.max(vol, 0)}
                       </td>
@@ -229,7 +232,7 @@ const OrderbookCell = (props: OrderbookProps) => {
         </table>
       </div>
       <div className="flex-grow p-5">
-        <GraphCell selected={selectedSecurity} />
+        <GraphCell selected={selectedSecurity} scale={props.securities[selectedSecurity].scale} />
       </div>
     </div>
   );

@@ -31,6 +31,7 @@ const Inventory = (props: InventoryProps) => {
   useEffect(() => {
     if (socket) {
       socket.on("inventory", (update) => {
+        console.log(update);
         setInventory((state) => {
           return { ...state, ...update };
         });
