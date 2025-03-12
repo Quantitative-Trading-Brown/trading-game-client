@@ -33,7 +33,7 @@ type OrderbookProps = {
 };
 
 const OrderbookCell = (props: OrderbookProps) => {
-  const [selectedSecurity, setSelectedSecurity] = useState(Object.keys(props.securities)[0]);
+  const [selectedSecurity, setSelectedSecurity] = useState(Number(Object.keys(props.securities)[0]));
   const [bidAskQuantity, setBidAskQuantity] = useState(1);
   const [orderbooks, setOrderbooks] = useState<Orderbooks>({});
   const { socket } = useSocket();
@@ -116,7 +116,7 @@ const OrderbookCell = (props: OrderbookProps) => {
       socket.emit("cancel_all", selectedSecurity);
     }
   };
-  function compare(a, b) {
+  function compare(a: any, b: any) {
     return Number(a[0]) > Number(b[0]) ? -1 : 1;
   }
 
