@@ -15,7 +15,7 @@ const News = (props : NewsProps) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("news", (msg_entry : string) => {
+      socket.on("news", (msg_entry : [string, string]) => {
         setMessages((prevMessages) => [...prevMessages, msg_entry])
       });
 
