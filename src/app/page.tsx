@@ -80,7 +80,7 @@ const Home = () => {
     bg-[url(/images/home-bg.jpg)] bg-cover"
     >
       <div
-        className="space-y-8 max-w-[35em] w-full ml-8 p-8 
+        className="space-y-8 w-full md:max-w-[600px] md:ml-8 p-8 
         bg-gray-800 shadow-lg border border-gray-700"
       >
         <h1 className="text-4xl font-semibold pl-4">QTAB Trading Simulator</h1>
@@ -88,7 +88,7 @@ const Home = () => {
           <button
             onClick={createGame}
             className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg 
-            hover:bg-red-600 hover:shadow-xl hover:scale-105 transition-all"
+            hover:bg-red-600 hover:shadow-xl hover:scale-102 transition-all"
           >
             Create Game
           </button>
@@ -114,7 +114,7 @@ const Home = () => {
             <button
               onClick={joinGame}
               className="w-full px-4 py-2 bg-green-700 text-lg font-semibold shadow-lg 
-              hover:bg-green-600 hover:shadow-xl hover:scale-105 transition-all"
+              hover:bg-green-600 hover:shadow-xl hover:scale-102 transition-all"
             >
               Join Game
             </button>

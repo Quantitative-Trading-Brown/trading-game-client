@@ -18,6 +18,7 @@ import ResolutionCell from "./resolution";
 const Game = () => {
   const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
   const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
+  const [pastnews, setPastNews] = useState([]);
   const [username, setUsername] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ const Game = () => {
 
   const updateProps = (props: GameProps) => {
     // Update game properties (none yet)
-    return
+    return;
   };
 
   const updateSecurities = (securities: SecurityProps) => {
@@ -45,6 +46,7 @@ const Game = () => {
       socket.on("snapshot", (snapshot) => {
         setUsername(snapshot.username);
         setOrderbooks(snapshot.orderbooks);
+        setPastNews(snapshot.past_news);
         updateState(snapshot.game_state);
         updateProps(snapshot.game_props);
         updateSecurities(snapshot.securities);
@@ -74,32 +76,36 @@ const Game = () => {
   switch (gameState) {
     case 0:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex-grow flex flex-auto justify-center gap-2">
             <div className="border-white border-2 w-full">
               <LobbyCell />
             </div>
           </div>
-          <div className="border-white border-2 w-[30em] overflow-y-auto overscroll-contain">
-            <NewsCell admin={false} />
+          <div className="flex-1 border-white border-2 overflow-y-auto overscroll-contain">
+            <NewsCell admin={false} news={pastnews} />
           </div>
         </div>
       );
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex flex-col flex-grow gap-2">
-            <div className="border-white border-2 h-full">
-              <OrderbookCell admin={false} orderbooks={orderbooks} securities={securities} />
+        <div className="flex flex-auto flex-wrap justify-center gap-2 overflow-y-auto w-full">
+          <div className="flex flex-col flex-grow gap-2 overflow-x-auto">
+            <div className="flex-grow border-white border-2 h-full">
+              <OrderbookCell
+                admin={false}
+                orderbooks={orderbooks}
+                securities={securities}
+              />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="h-[30em] border-white border-2 overflow-y-auto">
-              <NewsCell admin={false} />
-            </div>
+          <div className="flex flex-1 flex-col gap-2 w-full min-w-[300px]">
             <div className="flex-grow border-white border-2">
               <InventoryCell securities={securities} />
+            </div>
+            <div className="h-[30em] border-white border-2 overflow-y-auto">
+              <NewsCell admin={false} news={pastnews} />
             </div>
           </div>
         </div>
@@ -107,14 +113,14 @@ const Game = () => {
       break;
     case 2:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
-            <div className="border-white border-2 w-full">
+        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
+          <div className="flex-grow flex flex-col flex-auto gap-2">
+            <div className="border-white border-2 w-full h-full">
               <ResolutionCell />
             </div>
           </div>
-          <div className="border-white border-2 w-[30em] overflow-scroll overscroll-contain">
-            <NewsCell admin={false} />
+          <div className="flex-1 min-w-[350px] border-white border-2 overflow-y-auto overscroll-contain">
+            <NewsCell admin={false} news={pastnews} />
           </div>
         </div>
       );

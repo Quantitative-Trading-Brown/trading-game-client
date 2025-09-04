@@ -13,7 +13,7 @@ const Controls = () => {
   }
 
   return (
-    <div className="flex flex-col text-white p-4 max-w-lg w-[30em] mx-auto rounded-lg shadow-lg">
+    <div className="flex flex-col text-white p-4 max-w-lg mx-auto rounded-lg shadow-lg">
       <h2 className="text-lg font-bold mb-4">Control Panel</h2>
       <button
         onClick={handleEndGame}

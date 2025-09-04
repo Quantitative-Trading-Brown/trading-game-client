@@ -2,17 +2,21 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-const News = ({ admin } : { admin: boolean }) => {
+type NewsProps = {
+  admin: boolean;
+  news: string[];
+};
+
+
+const News = (props : NewsProps) => {
   const [messages, setMessages] = useState<[string, string][]>([]);
   const [buffer, setBuffer] = useState("");
   const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
-      socket.on("news", (msg : string) => {
-        var d = new Date();
-        var n = d.toLocaleTimeString();
-        setMessages((prevMessages) => [[msg, n], ...prevMessages])
+      socket.on("news", (msg_entry : string) => {
+        setMessages((prevMessages) => [...prevMessages, msg_entry])
       });
 
       return () => {
@@ -20,6 +24,13 @@ const News = ({ admin } : { admin: boolean }) => {
       };
     }
   }, [socket]);
+
+  // On refresh, load the past news from the snapshot in props
+  useEffect(() => {
+    if (props.news) {
+      setMessages(props.news);
+    }
+  }, []);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -32,17 +43,17 @@ const News = ({ admin } : { admin: boolean }) => {
   };
 
   return (
-    <div className="flex flex-col text-white p-4 max-w-lg h-full mx-auto rounded-lg shadow-lg">
+    <div className="flex flex-col text-white p-4 h-full shadow-lg">
       <h2 className="text-lg font-bold mb-4">Market News</h2>
-      <div className="flex-grow space-y-2 overflow-y-auto">
+      <div className="flex-grow space-y-2 overflow-y-auto w-full">
         {messages.map((data, index) => (
           <div key={index} className="flex justify-between items-center">
-            <p className="text-sm text-gray-300">{data[0]}</p>
-            <span className="text-xs text-gray-500">{data[1]}</span>
+            <p className="whitespace-normal text-sm text-gray-300 w-[70%]">{data[1]}</p>
+            <span className="whitespace-normal text-xs text-gray-500 w-[20%]">{data[0]}</span>
           </div>
         ))}
       </div>
-      {admin ? (<div className="w-full">
+      {props.admin ? (<div className="w-full">
         <input
           type="text"
           value={buffer}

@@ -17,6 +17,7 @@ import ResolutionCell from "./resolution";
 const Game = () => {
   const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
   const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
+  const [pastnews, setPastNews] = useState([]);
   const [code, setCode] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -42,6 +43,7 @@ const Game = () => {
     if (socket) {
       socket.on("snapshot", (snapshot) => {
         setOrderbooks(snapshot.orderbooks);
+        setPastNews(snapshot.past_news);
         updateState(snapshot.game_state);
         updateProps(snapshot.game_props);
         updateSecurities(snapshot.securities);
@@ -71,29 +73,29 @@ const Game = () => {
   switch (gameState) {
     case 0:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
+        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
+          <div className="flex-grow flex flex-auto justify-center gap-2">
             <div className="border-white border-2 w-full">
               <LobbyCell />
             </div>
           </div>
-          <div className="border-white border-2 w-[40em] overflow-y-auto">
-            <NewsCell admin={true} />
+          <div className="border-white border-2 flex-1 w-full min-w-[350px] overflow-y-auto">
+            <NewsCell admin={true} news={pastnews} />
           </div>
         </div>
       );
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex flex-col flex-grow gap-2">
+        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
+          <div className="flex flex-auto flex-col flex-grow gap-2">
             <div className="border-white border-2 h-full">
               <OrderbookCell admin={true} orderbooks={orderbooks} securities={securities} />
             </div>
           </div>
-          <div className="flex flex-col flex-grow gap-2">
+          <div className="flex flex-col flex-1 w-full min-w-[350px] gap-2">
             <div className="flex-grow border-white border-2 overflow-y-auto">
-              <NewsCell admin={true} />
+              <NewsCell admin={true} news={pastnews} />
             </div>
             <div className="border-white border-2">
               <ControlsCell />
@@ -111,7 +113,7 @@ const Game = () => {
             </div>
           </div>
           <div className="border-white border-2 w-[30em] overflow-y-auto">
-            <NewsCell admin={true} />
+            <NewsCell admin={true} news = {pastnews} />
           </div>
         </div>
       );

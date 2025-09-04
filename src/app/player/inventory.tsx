@@ -44,7 +44,7 @@ const Inventory = (props: InventoryProps) => {
   }, [socket]);
 
   return (
-    <div className="flex flex-col text-white p-4 max-w-lg w-[30em] mx-auto rounded-lg shadow-lg">
+    <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
       <h2 className="text-xl font-bold mb-4">Player Inventory</h2>
       <div className="text-lg space-y-2 overflow-y-auto h-full">
         {Object.entries(inventory).map(([sec_id, amount]: [any, any]) => (

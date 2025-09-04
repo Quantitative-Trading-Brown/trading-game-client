@@ -42,17 +42,17 @@ const Lobby = () => {
   };
 
   return (
-    <div className="flex flex-col h-full p-8">
+    <div className="flex flex-col h-full p-5">
       <h1 className="text-4xl font-extrabold mb-8">Trading Game Admin Setup</h1>
       <div className="flex flex-col flex-grow">
         <table className="text-l w-full">
           <thead className="bg-gray-700 border">
             <tr>
               <th className="p-2">Security Name</th>
-              <th className="p-2">Book Min</th>
-              <th className="p-2">Book Max</th>
+              <th className="p-2">Min</th>
+              <th className="p-2">Max</th>
               <th className="p-2">Scale</th>
-              <th className="p-2">Actions</th>
+              <th className="p-2"></th>
             </tr>
           </thead>
           <tbody className="bg-gray-700 border">
