@@ -4,7 +4,7 @@ import { useSocket } from "@/contexts/SocketContext";
 
 type NewsProps = {
   admin: boolean;
-  news: string[];
+  news: [string, string][];
 };
 
 
