@@ -11,6 +11,10 @@ type SecurityProps = {
   };
 };
 
+type Inventory = {
+  [key: number]: number;
+}
+
 type Orderbook = {
   [key: number]: number;
 };
@@ -19,8 +23,5 @@ type Orderbooks = {
   [key: number]: Orderbook;
 };
 
-type Inventory = {
-  [key: number]: number;
-}
 
 export type { GameProps, SecurityProps, Orderbook, Orderbooks, Inventory };

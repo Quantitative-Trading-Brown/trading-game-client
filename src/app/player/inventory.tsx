@@ -21,7 +21,7 @@ const generateInventory = (securities: SecurityProps, inventory: Inventory) => {
   return securityMap;
 };
 
-const Inventory = (props: InventoryProps) => {
+const InventoryCell = (props: InventoryProps) => {
   const [inventory, setInventory] = useState({});
   const { socket } = useSocket();
 
@@ -67,4 +67,4 @@ const Inventory = (props: InventoryProps) => {
   );
 };
 
-export default Inventory;
+export default InventoryCell;
