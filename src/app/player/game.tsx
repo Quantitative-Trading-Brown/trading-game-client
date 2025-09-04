@@ -19,6 +19,7 @@ const Game = () => {
   const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
   const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
   const [pastnews, setPastNews] = useState([]);
+  const [inventory, setInventory] = useState({});
   const [username, setUsername] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,7 @@ const Game = () => {
         setUsername(snapshot.username);
         setOrderbooks(snapshot.orderbooks);
         setPastNews(snapshot.past_news);
+        setInventory(snapshot.inventory);
         updateState(snapshot.game_state);
         updateProps(snapshot.game_props);
         updateSecurities(snapshot.securities);
@@ -102,7 +104,7 @@ const Game = () => {
           </div>
           <div className="flex flex-1 flex-col gap-2 w-full min-w-[300px]">
             <div className="flex-grow border-white border-2">
-              <InventoryCell securities={securities} />
+              <InventoryCell securities={securities} inventory={inventory} />
             </div>
             <div className="h-[30em] border-white border-2 overflow-y-auto">
               <NewsCell admin={false} news={pastnews} />

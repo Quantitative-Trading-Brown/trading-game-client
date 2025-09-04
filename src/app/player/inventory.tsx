@@ -1,21 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
-import { SecurityProps } from "@/utils/Types";
+import { SecurityProps, Inventory } from "@/utils/Types";
 
 type InventoryProps = {
   securities: SecurityProps;
+  inventory: Inventory;
 };
 
-const generateInventory = (securities: SecurityProps) => {
+const generateInventory = (securities: SecurityProps, inventory: Inventory) => {
   const securityMap = Object.keys(securities).reduce(
     (acc, key) => {
-      acc[Number(key)] = 0;
+      acc[Number(key)] = inventory[Number(key)] || 0;
       return acc;
     },
     {} as { [key: number]: number },
   );
-	securityMap[0] = 0;
+	securityMap[0] = inventory[0] || 0;
 
   return securityMap;
 };
@@ -25,8 +26,8 @@ const Inventory = (props: InventoryProps) => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    setInventory(generateInventory(props.securities));
-  }, [props.securities]);
+    setInventory(generateInventory(props.securities, props.inventory));
+  }, []);
 
   useEffect(() => {
     if (socket) {
