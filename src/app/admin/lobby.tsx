@@ -6,16 +6,14 @@ import { useSocket } from "@/contexts/SocketContext";
 const Lobby = () => {
   const { socket } = useSocket();
   const [securities, setSecurities] = useState([
-    { id: 1, name: "Example", bookMin: "1", bookMax: "10", scale: "5" },
+    { id: 1, name: "Example", tick: "1" },
   ]);
 
   const addSecurity = () => {
     const newSecurity = {
       id: securities.length ? securities[securities.length-1].id + 1 : 1,
       name: "",
-      bookMin: "",
-      bookMax: "",
-      scale: ""
+      tick: ""
     };
     setSecurities([...securities, newSecurity]);
   };
@@ -49,9 +47,7 @@ const Lobby = () => {
           <thead className="bg-gray-700 border">
             <tr>
               <th className="p-2">Security Name</th>
-              <th className="p-2">Min</th>
-              <th className="p-2">Max</th>
-              <th className="p-2">Scale</th>
+              <th className="p-2">Tick Size</th>
               <th className="p-2"></th>
             </tr>
           </thead>
@@ -71,29 +67,9 @@ const Lobby = () => {
                 <td className="p-1">
                   <input
                     type="number"
-                    value={sec.bookMin}
+                    value={sec.tick}
                     onChange={(e) =>
-                      handleInputChange(sec.id, "bookMin", e.target.value)
-                    }
-                    className="outline-none bg-gray-700 h-8 w-full p-1"
-                  />
-                </td>
-                <td className="p-1">
-                  <input
-                    type="number"
-                    value={sec.bookMax}
-                    onChange={(e) =>
-                      handleInputChange(sec.id, "bookMax", e.target.value)
-                    }
-                    className="outline-none bg-gray-700 h-8 w-full p-1"
-                  />
-                </td>
-                <td className="p-1">
-                  <input
-                    type="number"
-                    value={sec.scale}
-                    onChange={(e) =>
-                      handleInputChange(sec.id, "scale", e.target.value)
+                      handleInputChange(sec.id, "tick", e.target.value)
                     }
                     className="outline-none bg-gray-700 h-8 w-full p-1"
                   />

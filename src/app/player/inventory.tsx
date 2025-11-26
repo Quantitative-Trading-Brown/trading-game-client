@@ -46,7 +46,7 @@ const InventoryCell = (props: InventoryProps) => {
 
   return (
     <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Player Inventory</h2>
+      <h2 className="text-xl font-bold mb-4">Positions</h2>
       <div className="text-lg space-y-2 overflow-y-auto h-full">
         {Object.entries(inventory).map(([sec_id, amount]: [any, any]) => (
           <div

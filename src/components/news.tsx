@@ -44,8 +44,8 @@ const News = (props : NewsProps) => {
 
   return (
     <div className="flex flex-col text-white p-4 h-full shadow-lg">
-      <h2 className="text-lg font-bold mb-4">Market News</h2>
-      <div className="flex-grow space-y-2 overflow-y-auto w-full">
+      <h2 className="text-xl font-bold">News</h2>
+      <div className="flex-grow space-y-2 overflow-y-auto w-full pt-4">
         {messages.map((data, index) => (
           <div key={index} className="flex justify-between items-center">
             <p className="whitespace-normal text-sm text-gray-300 w-[70%]">{data[1]}</p>

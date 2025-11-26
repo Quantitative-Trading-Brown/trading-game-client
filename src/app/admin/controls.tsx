@@ -13,11 +13,11 @@ const Controls = () => {
   }
 
   return (
-    <div className="flex flex-col text-white p-4 max-w-lg mx-auto rounded-lg shadow-lg">
+    <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
       <h2 className="text-lg font-bold mb-4">Control Panel</h2>
       <button
         onClick={handleEndGame}
-        className="px-2 py-1 h-10 bg-gray-500 text-white shadow 
+        className="px-2 py-1 h-10 bg-gray-500 text-white shadow
           border-gray-500 active:border-l-[2px] active:border-t-[2px]
           hover:bg-red-600 flex-grow"
       >

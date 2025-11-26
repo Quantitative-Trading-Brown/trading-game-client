@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { useSocket } from "@/contexts/SocketContext";
-import { GameProps, SecurityProps } from "@/utils/Types"
+import { GameProps, SecurityProps } from "@/utils/Types";
 
 import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
@@ -27,7 +27,7 @@ const Game = () => {
   const { socket } = useSocket();
 
   const updateProps = (props: GameProps) => {
-    setCode(props.code)
+    setCode(props.code);
   };
 
   const updateSecurities = (securities: SecurityProps) => {
@@ -90,11 +90,15 @@ const Game = () => {
         <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex flex-auto flex-col flex-grow gap-2">
             <div className="border-white border-2 h-full">
-              <OrderbookCell admin={true} orderbooks={orderbooks} securities={securities} />
+              <OrderbookCell
+                admin={true}
+                orderbooks={orderbooks}
+                securities={securities}
+              />
             </div>
           </div>
-          <div className="flex flex-col flex-1 w-full min-w-[350px] gap-2">
-            <div className="flex-grow border-white border-2 overflow-y-auto">
+          <div className="max-w-[500px] flex flex-col flex-1 gap-2">
+            <div className=" flex-grow border-white border-2 overflow-y-auto">
               <NewsCell admin={true} news={pastnews} />
             </div>
             <div className="border-white border-2">
@@ -109,11 +113,11 @@ const Game = () => {
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
             <div className="border-white border-2 w-full">
-              <ResolutionCell securities={securities}/>
+              <ResolutionCell securities={securities} />
             </div>
           </div>
           <div className="border-white border-2 w-[30em] overflow-y-auto">
-            <NewsCell admin={true} news = {pastnews} />
+            <NewsCell admin={true} news={pastnews} />
           </div>
         </div>
       );
@@ -121,9 +125,15 @@ const Game = () => {
     case 3:
       Dash = (
         <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex-grow flex flex-auto justify-center gap-2 w-full">
-            <div className="border-white border-2 w-full">
+          <div className="flex-grow flex-col flex flex-auto justify-center gap-2 w-full">
+            <div className="flex-grow border-white border-2 w-full">
               <LeaderboardCell />
+            </div>
+            <div
+              className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
+              onClick={() => {document.location.href="/"}}
+            >
+              <h1 className="text-xl">Back to Home</h1>
             </div>
           </div>
         </div>
