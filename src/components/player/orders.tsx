@@ -78,7 +78,7 @@ const OrdersCell: React.FC<OrderProps> = ({ securities, existingOrders }) => {
       </div>
       <button
         onClick={CancelAllOrders}
-        className="px-2 py-1 h-10 bg-gray-500 text-white shadow border-black active:border-l-[2px] active:border-t-[2px] hover:bg-red-600"
+        className="px-2 py-1 bg-gray-500 text-white shadow border-black active:border-l-[2px] active:border-t-[2px] hover:bg-red-600"
       >
         Cancel All Orders
       </button>

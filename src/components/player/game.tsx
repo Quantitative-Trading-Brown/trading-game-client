@@ -9,17 +9,21 @@ import { SecurityProps, GameProps } from "@/utils/Types";
 import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
-import TradeCell from "@/components/trade";
+import SelectorCell from "@/components/secselector";
 
-import LobbyCell from "./lobby";
-import InventoryCell from "./inventory";
-import ResolutionCell from "./resolution";
-import OrdersCell from "./orders";
+import LobbyCell from "@/components/player/lobby";
+import InventoryCell from "@/components/player/inventory";
+import ResolutionCell from "@/components/player/resolution";
+import OrdersCell from "@/components/player/orders";
+import TradeCell from "@/components/player/trade";
 
 const Game = () => {
   const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
   const [orders, setOrders] = useState({}); // List of orders
+
   const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
+  const [selectedSecurity, setSelectedSecurity] = useState("");
+
   const [pastnews, setPastNews] = useState([]);
   const [inventory, setInventory] = useState({});
   const [username, setUsername] = useState("");
@@ -37,12 +41,14 @@ const Game = () => {
 
   const updateSecurities = (securities: SecurityProps) => {
     setSecurities(securities);
+    setSelectedSecurity(Object.keys(securities)[0]);
   };
 
   const updateState = (state: number) => {
     setGameState(Number(state));
     setLoading(false);
   };
+
 
   useEffect(() => {
     if (socket) {
@@ -73,6 +79,9 @@ const Game = () => {
     }
   }, [socket]);
 
+  const changeSelectedSecurity = (sec_id: string) =>
+    setSelectedSecurity(sec_id);
+
   if (loading) {
     return "Loading...";
   }
@@ -96,18 +105,24 @@ const Game = () => {
     case 1:
       Dash = (
         <div className="flex flex-auto flex-wrap justify-center gap-2 overflow-y-auto w-full">
-          <div className="flex flex-1 flex-col gap-2 w-full min-w-[300px]">
-            <div className="flex-grow border-white border-2">
-              <InventoryCell securities={securities} inventory={inventory} />
+          <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
+            <div className="border-white border-2">
+              <InventoryCell
+                securities={securities}
+                existing_inventory={inventory}
+              />
             </div>
-            <div className="h-[30em] border-white border-2 overflow-y-auto">
+            <div className="flex-grow border-white border-2 overflow-y-auto">
               <NewsCell admin={false} news={pastnews} />
             </div>
           </div>
           <div className="flex flex-grow gap-2 overflow-x-auto">
             <div className="flex flex-col gap-2 min-w-[650px]">
+              <div className="border-white border-2">
+                <SelectorCell securities={securities} onChange={changeSelectedSecurity}/>
+              </div>
               <div className="flex-grow border-white border-2">
-                <TradeCell securities={securities} />
+                <TradeCell selectedSecurity={selectedSecurity} />
               </div>
               <div className="h-[30em] border-white border-2 overflow-y-auto">
                 <OrdersCell securities={securities} existingOrders={orders} />
@@ -115,8 +130,8 @@ const Game = () => {
             </div>
             <div className="flex-grow border-white border-2 h-full">
               <OrderbookCell
-                existingOrders={orderbooks[1]}
-                selectedSecurity={securities[1]}
+                existingOrders={orderbooks}
+                selectedSecurity={selectedSecurity}
               />
             </div>
           </div>
@@ -146,7 +161,9 @@ const Game = () => {
             </div>
             <div
               className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
-              onClick={() => {document.location.href="/"}}
+              onClick={() => {
+                document.location.href = "/";
+              }}
             >
               <h1 className="text-xl">Back to Home</h1>
             </div>

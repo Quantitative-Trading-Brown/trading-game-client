@@ -10,13 +10,15 @@ import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
 
-import LobbyCell from "./lobby";
-import ControlsCell from "./controls";
-import ResolutionCell from "./resolution";
+import LobbyCell from "@/components/admin/lobby";
+import ControlsCell from "@/components/admin/controls";
+import ResolutionCell from "@/components/admin/resolution";
+
+import Orderbooks from "@/utils/types";
 
 const Game = () => {
-  const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
-  const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
+  const [orderbooks, setOrderbooks] = useState({});
+  const [securities, setSecurities] = useState<Orderbooks>({});
   const [pastnews, setPastNews] = useState([]);
   const [code, setCode] = useState("");
 
@@ -91,9 +93,8 @@ const Game = () => {
           <div className="flex flex-auto flex-col flex-grow gap-2">
             <div className="border-white border-2 h-full">
               <OrderbookCell
-                admin={true}
-                orderbooks={orderbooks}
-                securities={securities}
+                existingOrders={orderbooks}
+                selectedSecurity={"AAPL"}
               />
             </div>
           </div>
@@ -131,7 +132,9 @@ const Game = () => {
             </div>
             <div
               className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
-              onClick={() => {document.location.href="/"}}
+              onClick={() => {
+                document.location.href = "/";
+              }}
             >
               <h1 className="text-xl">Back to Home</h1>
             </div>

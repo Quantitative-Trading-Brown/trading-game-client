@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import { SocketProvider } from "@/contexts/SocketContext";
-import Game from "./game";
+import Game from "@/components/player/game";
 
 const PlayerPage = () => {
   const [code, setCode] = useState<string | null>(null);

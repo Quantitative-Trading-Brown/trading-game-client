@@ -10,41 +10,59 @@ type OrderbookProps = {
 
 const OrderbookCell: React.FC<OrderbookProps> = ({
   existingOrders,
-  selectedSecurity,
+  selectedSecurity
 }) => {
-  const [orderbook, setOrderbook] = useState<Orderbook>({});
+  const [orderbooks, setOrderbooks] = useState<Orderbooks>({});
   const { socket } = useSocket();
 
-  // Apply incremental updates from socket
-  useEffect(() => {
-    if (!socket) return;
-    const handler = (security: number, updates: Orderbook) => {
-      setOrderbook((existing) => {
-        const secBook = existing || {};
-        const newBook: { [key: number]: number } = { ...secBook };
+  const updateOrderbooks = (updates: Orderbooks) => {
+    setOrderbooks((existing = {}) => {
+      // Create a shallow copy of the existing orderbooks
+      const newBook: Orderbooks = { ...existing };
 
-        for (const price in updates) {
-          const vol = updates[price];
+      for (const symbol in updates) {
+        const bookUpdates = updates[symbol];
+
+        // Create a shallow copy of the specific orderbook or initialize it
+        const symbolBook: Orderbook = { ...(newBook[symbol] || {}) };
+
+        for (const priceStr in bookUpdates) {
+          const price = Number(priceStr);
+          const vol = bookUpdates[price];
+
           if (vol === 0) {
-            delete newBook[price]; // remove zero volume levels
+            delete symbolBook[price];
           } else {
-            newBook[price] = vol;
+            symbolBook[price] = vol;
           }
         }
 
-        return newBook;
-      });
-    };
+        newBook[symbol] = symbolBook;
+      }
 
-    socket.on("orderbook", handler);
-    return () => socket.off("orderbook", handler);
+      return newBook;
+    });
+  };
+
+  // Apply incremental updates from socket
+  useEffect(() => {
+    if (socket) {
+      socket.on("orderbook", updateOrderbooks);
+
+      return () => {
+        socket.off("orderbook");
+      };
+    }
   }, [socket]);
 
   // Apply initial orderbooks from props
   useEffect(() => {
     if (!existingOrders) return;
-    setOrderbook((existing) => ({ ...(existing || {}), ...existingOrders }));
+    setOrderbooks(existingOrders);
   }, [existingOrders]);
+
+  // Specific to this security
+  const { [selectedSecurity]: orderbook } = orderbooks;
 
   // Compute bids with cumulative totals
   const bids = useMemo(() => {
@@ -58,7 +76,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
         return {
           price: Number(price),
           quantity: Number(vol),
-          total: cumulative,
+          total: cumulative
         };
       })
       .reverse();
@@ -76,7 +94,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
         return {
           price: Number(price),
           quantity: -Number(vol),
-          total: cumulative,
+          total: cumulative
         };
       })
       .reverse();
@@ -84,7 +102,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
 
   const maxVolume = useMemo(
     () => Math.max(...bids.map((b) => b.total), ...asks.map((a) => a.total), 1),
-    [bids, asks],
+    [bids, asks]
   );
 
   return (

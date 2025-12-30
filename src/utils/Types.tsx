@@ -8,7 +8,7 @@ type Security = {
 };
 
 type SecurityProps = {
-  [key: number]: Security;
+  [key: string]: Security;
 };
 
 type Inventory = {
@@ -20,7 +20,7 @@ type Orderbook = {
 };
 
 type Orderbooks = {
-  [key: number]: Orderbook;
+  [key: string]: Orderbook;
 };
 
 type Order = {
