@@ -13,7 +13,7 @@ const Resolution = (props: ResolutionProps) => {
   const { socket } = useSocket();
 
   const handlePriceChange = (sec_id : number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(0, Math.min(1e3, Number(event.target.value)));
+    const value = Math.max(0, Number(event.target.value));
     setPrices((state) => {
       return { ...state, [sec_id]: value };
     });

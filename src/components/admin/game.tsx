@@ -9,6 +9,7 @@ import { GameProps, SecurityProps } from "@/utils/Types";
 import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
+import SelectorCell from "@/components/secselector";
 
 import LobbyCell from "@/components/admin/lobby";
 import ControlsCell from "@/components/admin/controls";
@@ -18,7 +19,10 @@ import Orderbooks from "@/utils/types";
 
 const Game = () => {
   const [orderbooks, setOrderbooks] = useState({});
+
   const [securities, setSecurities] = useState<Orderbooks>({});
+  const [selectedSecurity, setSelectedSecurity] = useState("");
+
   const [pastnews, setPastNews] = useState([]);
   const [code, setCode] = useState("");
 
@@ -34,6 +38,7 @@ const Game = () => {
 
   const updateSecurities = (securities: SecurityProps) => {
     setSecurities(securities);
+    setSelectedSecurity(Object.keys(securities)[0]);
   };
 
   const updateState = (state: string) => {
@@ -67,6 +72,9 @@ const Game = () => {
     }
   }, [socket]);
 
+  const changeSelectedSecurity = (sec_id: string) =>
+    setSelectedSecurity(sec_id);
+
   if (loading) {
     return "Loading...";
   }
@@ -76,8 +84,11 @@ const Game = () => {
     case 0:
       Dash = (
         <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex-grow flex flex-auto justify-center gap-2">
-            <div className="border-white border-2 w-full">
+          <div className="flex-grow flex flex-col flex-auto justify-center gap-2">
+            <div className="p-2 border-white border-2 w-full">
+              <h2 className="text-center text-2xl font-extrabold">Game Code: {code}</h2>
+            </div>
+            <div className="flex-grow border-white border-2 w-full">
               <LobbyCell />
             </div>
           </div>
@@ -89,12 +100,18 @@ const Game = () => {
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
-          <div className="flex flex-auto flex-col flex-grow gap-2">
-            <div className="border-white border-2 h-full">
+        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 min-h-0">
+          <div className="flex flex-auto flex-col flex-grow gap-2 h-full">
+            <div className="border-white border-2">
+              <SelectorCell
+                securities={securities}
+                onChange={changeSelectedSecurity}
+              />
+            </div>
+            <div className="flex-grow border-white border-2 overflow-y-auto">
               <OrderbookCell
                 existingOrders={orderbooks}
-                selectedSecurity={"AAPL"}
+                selectedSecurity={selectedSecurity}
               />
             </div>
           </div>
@@ -103,7 +120,7 @@ const Game = () => {
               <NewsCell admin={true} news={pastnews} />
             </div>
             <div className="border-white border-2">
-              <ControlsCell />
+              <ControlsCell code={code} />
             </div>
           </div>
         </div>
@@ -145,10 +162,7 @@ const Game = () => {
   }
 
   return (
-    <div className="flex flex-col items-center h-screen gap-2 p-2">
-      <div className="flex flex-none w-full h-[3em] justify-center items-center border-white border-2 p-2">
-        <h1 className="text-2xl font-bold">Game Code: {code}</h1>
-      </div>
+    <div className="flex flex-col items-center h-screen gap-2 p-2 overflow-y-auto">
       {Dash}
     </div>
   );

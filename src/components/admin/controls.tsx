@@ -2,7 +2,11 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-const Controls = () => {
+type ControlProps = {
+  code: string;
+};
+
+const Controls: React.FC<ControlProps> = ({ code }) => {
   const [paused, setPaused] = useState({});
   const { socket } = useSocket();
 
@@ -10,11 +14,14 @@ const Controls = () => {
     if (socket) {
       socket.emit("endgame");
     }
-  }
+  };
 
   return (
     <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold mb-4">Control Panel</h2>
+      <h2 className="text-lg font-bold pb-4">Control Panel</h2>
+      <div className="py-2">
+      <h2 className="text-lg font-bold p-2 text-center bg-gray-800">Code: {code}</h2>
+      </div>
       <button
         onClick={handleEndGame}
         className="px-2 py-1 h-10 bg-gray-500 text-white shadow

@@ -48,32 +48,49 @@ const OrdersCell: React.FC<OrderProps> = ({ securities, existingOrders }) => {
     <div className="p-4 text-white rounded-lg flex flex-col gap-2 overflow-y-auto h-full">
       <h2 className="font-bold text-xl">My Orders</h2>
       <div className="flex-grow overflow-y-auto">
-        <div className="grid grid-cols-4 gap-2 font-mono text-sm overflow-y-auto">
-          <div className="font-semibold">Side</div>
-          <div className="font-semibold">Price</div>
-          <div className="font-semibold">Quantity</div>
-          <div className="font-semibold">Action</div>
-          {Object.entries(orders).map(([oid, data]) => (
-            <React.Fragment key={oid}>
-              <div
-                className={
-                  data.side === "bids" ? "text-green-400" : "text-red-400"
-                }
-              >
-                {data.side === "bids" ? "BUY" : "SELL"}
-              </div>
-              <div>{data.price}</div>
-              <div>{data.quantity}</div>
-              <div>
-                <button
-                  onClick={() => cancelOrder(oid)}
-                  className="px-2 py-1 bg-gray-600 rounded hover:bg-red-700"
+        <div className="overflow-y-auto font-mono text-sm">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="h-6 font-semibold text-gray-300 border-b border-gray-600">
+                <th className="w-1/4 text-left">Side</th>
+                <th className="w-1/4 text-center">Price</th>
+                <th className="w-1/4 text-center">Quantity</th>
+                <th className="w-1/4 text-right">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {Object.entries(orders).map(([oid, data]) => (
+                <tr
+                  key={oid}
+                  className=""
                 >
-                  Cancel
-                </button>
-              </div>
-            </React.Fragment>
-          ))}
+                  <td
+                    className={
+                      data.side === "bids"
+                        ? "text-green-400 text-left"
+                        : "text-red-400 text-left"
+                    }
+                  >
+                    {data.side === "bids" ? "BUY" : "SELL"}
+                  </td>
+
+                  <td className="text-center">{data.price}</td>
+
+                  <td className="text-center">{data.quantity}</td>
+
+                  <td className="text-right">
+                    <button
+                      onClick={() => cancelOrder(oid)}
+                      className="px-2 py-1 bg-gray-600 rounded hover:bg-red-700"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <button

@@ -106,7 +106,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-y-auto">
       <h2 className="text-xl font-bold p-5">Orderbook</h2>
       <div className="flex flex-col h-full overflow-y-auto px-8 py-2 gap-1">
         {/* Header Row */}

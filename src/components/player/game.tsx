@@ -49,7 +49,6 @@ const Game = () => {
     setLoading(false);
   };
 
-
   useEffect(() => {
     if (socket) {
       socket.on("snapshot", (snapshot) => {
@@ -104,7 +103,7 @@ const Game = () => {
       break;
     case 1:
       Dash = (
-        <div className="flex flex-auto flex-wrap justify-center gap-2 overflow-y-auto w-full">
+        <div className="flex flex-auto flex-wrap justify-center gap-2 w-full min-h-0">
           <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
             <div className="border-white border-2">
               <InventoryCell
@@ -116,23 +115,28 @@ const Game = () => {
               <NewsCell admin={false} news={pastnews} />
             </div>
           </div>
-          <div className="flex flex-grow gap-2 overflow-x-auto">
+          <div className="flex flex-grow gap-2 overflow-x-auto h-full">
             <div className="flex flex-col gap-2 min-w-[650px]">
               <div className="border-white border-2">
-                <SelectorCell securities={securities} onChange={changeSelectedSecurity}/>
+                <SelectorCell
+                  securities={securities}
+                  onChange={changeSelectedSecurity}
+                />
               </div>
-              <div className="flex-grow border-white border-2">
+              <div className="border-white border-2">
                 <TradeCell selectedSecurity={selectedSecurity} />
               </div>
-              <div className="h-[30em] border-white border-2 overflow-y-auto">
+              <div className="flex-grow border-white border-2 overflow-y-auto">
                 <OrdersCell securities={securities} existingOrders={orders} />
               </div>
             </div>
-            <div className="flex-grow border-white border-2 h-full">
-              <OrderbookCell
-                existingOrders={orderbooks}
-                selectedSecurity={selectedSecurity}
-              />
+            <div className="flex flex-col flex-grow h-full">
+              <div className="flex-grow border-white border-2 overflow-y-auto">
+                <OrderbookCell
+                  existingOrders={orderbooks}
+                  selectedSecurity={selectedSecurity}
+                />
+              </div>
             </div>
           </div>
         </div>
