@@ -1,3 +1,9 @@
+type Server = {
+  name: string;
+  ip: string;
+  up: boolean;
+};
+
 type GameProps = {
   code: string;
 };
@@ -12,7 +18,7 @@ type SecurityProps = {
 };
 
 type Inventory = {
-  [key: number]: number;
+  [key: string]: number;
 };
 
 type Orderbook = {
@@ -26,11 +32,39 @@ type Orderbooks = {
 type Order = {
   id: string;
   security: number;
-  side: "bid" | "ask";
+  side: "bids" | "asks";
   price: number;
   quantity: number;
 };
 
-type Orders = [order: Order];
+type Orders = {
+  [key: string]: Order;
+};
 
-export type { GameProps, SecurityProps, Orderbook, Orderbooks, Inventory };
+type OrderUpdates = {
+  new: Orders;
+  modified: {
+    [key: string]: [number, number];
+  };
+  deleted: string[];
+};
+
+type Preset = {
+  id: string;
+  name: string;
+  desc: string;
+};
+
+export type {
+  Server,
+  GameProps,
+  SecurityProps,
+  Security,
+  Orderbook,
+  Orderbooks,
+  OrderUpdates,
+  Orders,
+  Order,
+  Inventory,
+  Preset
+};

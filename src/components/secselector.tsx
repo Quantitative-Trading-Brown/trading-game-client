@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
+import { Security, SecurityProps } from "@/utils/Types";
+
 type SelectorBoxProps = {
-  selectedSecurity: string;
+  securities: SecurityProps;
   onChange: (value: string) => void;
 };
 
@@ -44,11 +46,13 @@ const SelectorCell: React.FC<SelectorBoxProps> = ({ securities, onChange }) => {
           onChange={ChangeSecurity}
           className="px-4 py-2 bg-gray-700 flex-grow"
         >
-          {Object.entries(securities).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value.name}
-            </option>
-          ))}
+          {Object.entries(securities).map(
+            ([key, value]: [string, Security]) => (
+              <option key={key} value={key}>
+                {value.name}
+              </option>
+            )
+          )}
         </select>
       </div>
     </div>

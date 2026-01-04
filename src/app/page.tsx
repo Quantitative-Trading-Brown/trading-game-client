@@ -5,7 +5,23 @@ import { collection, getDocs } from "firebase/firestore";
 import axios from "axios";
 
 import db from "@/scripts/firestore";
-import { GameProps } from "@/utils/Types";
+import { GameProps, Server } from "@/utils/Types";
+
+import ServerSelector from "@/components/serverselector";
+
+async function fetchBanner() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "images"));
+    const documents = querySnapshot.docs;
+    const data = Object.fromEntries(
+      documents.map((doc) => [doc.id, doc.data()])
+    );
+
+    return data.banner?.link;
+  } catch (error) {
+    console.error("Error fetching Firestore data:", error);
+  }
+}
 
 const Home = () => {
   const [gameCode, setGameCode] = useState("");
@@ -13,27 +29,24 @@ const Home = () => {
   const [status, setStatus] = useState("");
   const [sponsors, setSponsors] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "images"));
-        const documents = querySnapshot.docs;
-        const data = Object.fromEntries(
-          documents.map((doc) => [doc.id, doc.data()]),
-        );
-        setSponsors(data.banner.link);
-      } catch (error) {
-        console.error("Error fetching Firestore data:", error);
-      }
-    };
+  const [selectedServer, setSelectedServer] = useState({});
 
-    fetchData();
+  const handleServerSelect = (server: Server) => {
+    setSelectedServer(server);
+    localStorage.setItem("server_ip", server.ip);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("server_ip", "");
+    if (Number(process.env.SHOW_SPONSORS) == 1) {
+      fetchBanner().then((result) => setSponsors(result));
+    }
   }, []);
 
   const createGame = async () => {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/create-game`,
+        `${localStorage.getItem("server_ip")}/create-game`
       );
       localStorage.setItem("admin_code", response.data.code);
       localStorage.setItem("admin_token", response.data.token);
@@ -41,7 +54,7 @@ const Home = () => {
       window.location.href = "/admin";
     } catch (err: any) {
       if (err.response) {
-        setStatus(`Error creating game: ${err.response}`);
+        setStatus(`Error creating game: ${err.response.status}`);
       } else {
         setStatus(`Error creating game: ${err}`);
       }
@@ -55,11 +68,11 @@ const Home = () => {
     }
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/join-game`,
+        `${localStorage.getItem("server_ip")}/join-game`,
         {
           code: gameCode,
-          playerName,
-        },
+          playerName
+        }
       );
       localStorage.setItem("player_code", gameCode);
       localStorage.setItem("player_token", response.data.token);
@@ -76,18 +89,24 @@ const Home = () => {
 
   return (
     <div
-      className="h-screen flex flex-col justify-center items-start 
+      className="h-screen flex flex-col justify-center items-start
     bg-[url(/images/home-bg.jpg)] bg-cover"
     >
       <div
-        className="space-y-8 w-full md:max-w-[600px] md:ml-8 p-8 
+        className="space-y-8 w-full md:max-w-[600px] md:ml-8 p-8
         bg-gray-800 shadow-lg border border-gray-700"
       >
         <h1 className="text-4xl font-semibold pl-4">QTAB Trading Simulator</h1>
         <div className="flex flex-col space-y-6">
+          <div>
+            <ServerSelector
+              onSelect={(selected) => handleServerSelect(selected)}
+            />
+          </div>
+          <hr className="border-gray-600" />
           <button
             onClick={createGame}
-            className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg 
+            className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg
             hover:bg-red-600 hover:shadow-xl hover:scale-102 transition-all"
           >
             Create Game
@@ -100,7 +119,7 @@ const Home = () => {
               placeholder="Enter Game Code"
               value={gameCode}
               onChange={(e) => setGameCode(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg 
+              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg
               border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <input
@@ -108,12 +127,12 @@ const Home = () => {
               placeholder="Enter Player Name"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg 
+              className="w-full px-4 py-2 bg-gray-700 text-gray-300 shadow-lg
               border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <button
               onClick={joinGame}
-              className="w-full px-4 py-2 bg-green-700 text-lg font-semibold shadow-lg 
+              className="w-full px-4 py-2 bg-green-700 text-lg font-semibold shadow-lg
               hover:bg-green-600 hover:shadow-xl hover:scale-102 transition-all"
             >
               Join Game

@@ -61,8 +61,8 @@ const TradeCell: React.FC<TradeBoxProps> = ({ selectedSecurity }) => {
         </button>
       </div>
 
-      <div className="flex justify-between">
-        <div className="flex justify-left items-center pr-5">
+      <div className="flex justify-between w-full">
+        <div className="flex justify-left items-center">
           <span className="mr-2">Quantity:</span>
           <input
             id="quantity"

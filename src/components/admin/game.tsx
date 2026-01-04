@@ -15,12 +15,12 @@ import LobbyCell from "@/components/admin/lobby";
 import ControlsCell from "@/components/admin/controls";
 import ResolutionCell from "@/components/admin/resolution";
 
-import Orderbooks from "@/utils/types";
+import { Orderbooks } from "@/utils/Types";
 
 const Game = () => {
   const [orderbooks, setOrderbooks] = useState({});
 
-  const [securities, setSecurities] = useState<Orderbooks>({});
+  const [securities, setSecurities] = useState({});
   const [selectedSecurity, setSelectedSecurity] = useState("");
 
   const [pastnews, setPastNews] = useState([]);
@@ -86,7 +86,9 @@ const Game = () => {
         <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-y-auto">
           <div className="flex-grow flex flex-col flex-auto justify-center gap-2">
             <div className="p-2 border-white border-2 w-full">
-              <h2 className="text-center text-2xl font-extrabold">Game Code: {code}</h2>
+              <h2 className="text-center text-2xl font-extrabold">
+                Game Code: {code}
+              </h2>
             </div>
             <div className="flex-grow border-white border-2 w-full">
               <LobbyCell />

@@ -19,7 +19,7 @@ const PlayerPage = () => {
     }
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth`,
+        `${localStorage.getItem("server_ip")}/auth`,
         {
           token: token,
         },

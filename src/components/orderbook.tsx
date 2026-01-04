@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { useSocket } from "@/contexts/SocketContext";
-import { Orderbook, Security } from "@/utils/Types";
+import { Orderbook, Orderbooks, Security } from "@/utils/Types";
 
 type OrderbookProps = {
-  existingOrders: Orderbook;
-  selectedSecurity: Security;
+  existingOrders: Orderbooks;
+  selectedSecurity: string;
 };
 
 const OrderbookCell: React.FC<OrderbookProps> = ({

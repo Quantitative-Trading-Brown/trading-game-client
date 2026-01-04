@@ -3,14 +3,16 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
+import {Preset} from "@/utils/Types"
+
 const Lobby = () => {
   const { socket } = useSocket();
-  const [presets, setPresets] = useState([]);
-  const [chosen, setChosen] = useState("");
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [chosen, setChosen] = useState<string>("");
 
   useEffect(() => {
     if (socket) {
-      socket.on("presets", (presets) => {
+      socket.on("presets", (presets: Preset[]) => {
         setPresets(presets);
       });
 

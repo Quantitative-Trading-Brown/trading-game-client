@@ -10,17 +10,17 @@ type InventoryProps = {
 
 const generateInventory = (securities: SecurityProps, inventory: Inventory) => {
   const securityMap = Object.keys(securities).reduce(
-    (acc, key) => {
+    (acc: Inventory, key: string) => {
       acc[key] = inventory[key] || 0;
       return acc;
     },
-    {"USD": inventory["USD"] || 0} as { [key: number]: number }
+    {"USD": inventory["USD"] || 0} as { [key: string]: number }
   );
 
   return securityMap;
 };
 
-const InventoryCell: React.FC<TradeBoxProps> = ({ securities, existing_inventory }) => {
+const InventoryCell: React.FC<InventoryProps> = ({ securities, existing_inventory }) => {
   const [inventory, setInventory] = useState({});
   const { socket } = useSocket();
 

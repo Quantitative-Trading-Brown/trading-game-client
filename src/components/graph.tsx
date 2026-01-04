@@ -88,7 +88,7 @@ const Graph = (props: GraphProps) => {
     });
 
     setSecurityData((prevData) => {
-      const updatedData = [...(prevData[security] || []), y*props.securities[security].scale];
+      const updatedData = [...(prevData[security] || []), y];
 
       // Trim to keep only the last 30 elements
       return {
