@@ -16,7 +16,7 @@ const Lobby = () => {
         setPresets(presets);
       });
 
-      socket.emit("querypresets");
+      socket.emit("presets");
 
       return () => {
         socket.off("presets");

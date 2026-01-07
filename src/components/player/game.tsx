@@ -34,37 +34,33 @@ const Game = () => {
 
   const { socket } = useSocket();
 
-  const updateProps = (props: GameProps) => {
-    // Update game properties (none yet)
-    return;
-  };
-
   const updateSecurities = (securities: SecurityProps) => {
     setSecurities(securities);
     setSelectedSecurity(Object.keys(securities)[0]);
   };
 
-  const updateState = (state: number) => {
+  const updateState = (state: string) => {
     setGameState(Number(state));
+  };
+
+  const updateSnapshot = (snapshot) => {
+    setUsername(snapshot.username);
+    setOrderbooks(snapshot.orderbooks);
+    setOrders(snapshot.orders);
+    setPastNews(snapshot.past_news);
+    setInventory(snapshot.inventory);
+
+    updateState(snapshot.game_props.state);
+    updateSecurities(snapshot.securities);
+
     setLoading(false);
   };
 
   useEffect(() => {
     if (socket) {
-      socket.on("snapshot", (snapshot) => {
-        setUsername(snapshot.username);
-        setOrderbooks(snapshot.orderbooks);
-        setOrders(snapshot.orders);
-        setPastNews(snapshot.past_news);
-        setInventory(snapshot.inventory);
-        updateState(snapshot.game_state);
-        updateProps(snapshot.game_props);
-        updateSecurities(snapshot.securities);
-      });
+      socket.on("snapshot", updateSnapshot);
 
       socket.on("gamestate_update", updateState);
-      socket.on("gameprops_update", updateProps);
-
       socket.on("securities_update", updateSecurities);
 
       socket.emit("snapshot");
@@ -72,7 +68,6 @@ const Game = () => {
       return () => {
         socket.off("snapshot");
         socket.off("gamestate_update");
-        socket.off("gameprops_update");
         socket.off("securities_update");
       };
     }
