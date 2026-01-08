@@ -26,7 +26,7 @@ const Game = () => {
 
   const [pastnews, setPastNews] = useState([]);
   const [inventory, setInventory] = useState({});
-  const [cash, setCash] = useState({});
+  const [cash, setCash] = useState({ cash: 0, reserve: 0 });
   const [username, setUsername] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ const Game = () => {
     setGameState(Number(state));
   };
 
-  const updateSnapshot = (snapshot) => {
+  const updateSnapshot = (snapshot: any) => {
     setUsername(snapshot.username);
     setOrderbooks(snapshot.orderbooks);
     setOrders(snapshot.orders);

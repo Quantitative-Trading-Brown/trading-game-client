@@ -14,14 +14,9 @@ const InventoryCell: React.FC<InventoryProps> = ({
   existing_inventory,
   existing_cash
 }) => {
-  const [cash, setCash] = useState({});
-  const [inventory, setInventory] = useState({});
+  const [cash, setCash] = useState<Cash>(existing_cash);
+  const [inventory, setInventory] = useState<Inventory>(existing_inventory);
   const { socket } = useSocket();
-
-  useEffect(() => {
-    setInventory(existing_inventory);
-    setCash(existing_cash);
-  }, []);
 
   useEffect(() => {
     if (socket) {

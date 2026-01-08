@@ -5,6 +5,7 @@ type Server = {
 };
 
 type GameProps = {
+  state: number;
   code: string;
 };
 
@@ -71,5 +72,6 @@ export type {
   Orders,
   Order,
   Inventory,
+  Cash,
   Preset
 };
