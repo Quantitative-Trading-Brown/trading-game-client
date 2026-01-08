@@ -26,6 +26,7 @@ const Game = () => {
 
   const [pastnews, setPastNews] = useState([]);
   const [inventory, setInventory] = useState({});
+  const [cash, setCash] = useState({});
   const [username, setUsername] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -49,6 +50,7 @@ const Game = () => {
     setOrders(snapshot.orders);
     setPastNews(snapshot.past_news);
     setInventory(snapshot.inventory);
+    setCash(snapshot.cash);
 
     updateState(snapshot.game_props.state);
     updateSecurities(snapshot.securities);
@@ -104,6 +106,7 @@ const Game = () => {
               <InventoryCell
                 securities={securities}
                 existing_inventory={inventory}
+                existing_cash={cash}
               />
             </div>
             <div className="flex-grow border-white border-2 overflow-y-auto">

@@ -26,8 +26,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
         // Create a shallow copy of the specific orderbook or initialize it
         const symbolBook: Orderbook = { ...(newBook[symbol] || {}) };
 
-        for (const priceStr in bookUpdates) {
-          const price = Number(priceStr);
+        for (const price in bookUpdates) {
           const vol = bookUpdates[price];
 
           if (vol === 0) {
