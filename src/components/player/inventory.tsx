@@ -1,33 +1,50 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
-import { SecurityProps, Inventory, Cash } from "@/utils/Types";
+import { SecurityProps, Inventory } from "@/utils/Types";
 
 type InventoryProps = {
   securities: SecurityProps;
   existing_inventory: Inventory;
-  existing_cash: Cash;
+  existing_cash: number;
+  existing_position_value: number;
+  existing_margin: number;
 };
 
 const InventoryCell: React.FC<InventoryProps> = ({
   securities,
   existing_inventory,
-  existing_cash
+  existing_cash,
+  existing_position_value,
+  existing_margin,
 }) => {
-  const [cash, setCash] = useState<Cash>(existing_cash);
-  const [inventory, setInventory] = useState<Inventory>(existing_inventory);
+  const [cash, setCash] = useState(existing_cash);
+  const [positionValue, setPositionValue] = useState(existing_position_value);
+  const [margin, setMargin] = useState(existing_margin);
+
+  const [inventory, setInventory] = useState(existing_inventory);
   const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
       socket.on("inventory", (update) => {
-        setInventory((state) => {
-          return { ...state, ...update["securities"] };
-        });
+        if ("securities" in update) {
+          setInventory((state) => {
+            return { ...state, ...update["securities"] };
+          });
+        }
 
-        setCash((state) => {
-          return { ...state, ...update["cash"] };
-        });
+        if ("cash" in update) {
+          setCash(update["cash"]);
+        }
+
+        if ("position_value" in update) {
+          setPositionValue(Math.round(update["position_value"]));
+        }
+
+        if ("margin" in update) {
+          setMargin(Math.round(update["margin"]));
+        }
       });
 
       return () => {
@@ -38,6 +55,25 @@ const InventoryCell: React.FC<InventoryProps> = ({
 
   return (
     <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
+      <h2 className="text-xl font-bold mb-4">Account</h2>
+      <div className="text-lg space-y-2 overflow-y-auto h-full">
+        <div>
+          <span>Equity: ${Number(cash) + Number(positionValue)}</span>
+        </div>
+        <div className="pl-7">
+          <div>
+            <span>Cash: ${cash ?? 0}</span>
+          </div>
+          <div>
+            <span>Position Value: ${positionValue ?? 0}</span>
+          </div>
+        </div>
+
+        <div>
+          <span>Minimum Equity: ${margin}</span>
+        </div>
+      </div>
+      <hr className="my-4" />
       <h2 className="text-xl font-bold mb-4">Positions</h2>
       <div className="text-lg space-y-2 overflow-y-auto h-full">
         {Object.entries(securities).map(([sec_id, props]: [any, any]) => (
@@ -50,8 +86,6 @@ const InventoryCell: React.FC<InventoryProps> = ({
             </span>
           </div>
         ))}
-        <div><span>Liquid: ${cash["cash"] ?? 0}</span></div>
-        <div><span>Reserve: ${cash["reserve"] ?? 0}</span></div>
       </div>
     </div>
   );

@@ -56,10 +56,6 @@ type Preset = {
   desc: string;
 };
 
-type Cash = {
-  cash: number;
-  reserve: number;
-}
 
 export type {
   Server,
@@ -72,6 +68,5 @@ export type {
   Orders,
   Order,
   Inventory,
-  Cash,
   Preset
 };

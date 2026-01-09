@@ -18,16 +18,19 @@ import OrdersCell from "@/components/player/orders";
 import TradeCell from "@/components/player/trade";
 
 const Game = () => {
+  const [username, setUsername] = useState("");
+  const [pastnews, setPastNews] = useState([]);
+
   const [orderbooks, setOrderbooks] = useState({}); // Maps sec_id to orderbook
   const [orders, setOrders] = useState({}); // List of orders
 
   const [securities, setSecurities] = useState({}); // Maps sec_id to [bookMin, bookMax]
   const [selectedSecurity, setSelectedSecurity] = useState("");
 
-  const [pastnews, setPastNews] = useState([]);
   const [inventory, setInventory] = useState({});
-  const [cash, setCash] = useState({ cash: 0, reserve: 0 });
-  const [username, setUsername] = useState("");
+  const [cash, setCash] = useState(0);
+  const [positionValue, setPositionValue] = useState(0);
+  const [margin, setMargin] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [gameState, setGameState] = useState<number>(0);
@@ -51,6 +54,8 @@ const Game = () => {
     setPastNews(snapshot.past_news);
     setInventory(snapshot.inventory);
     setCash(snapshot.cash);
+    setPositionValue(Math.round(snapshot.position_value))
+    setMargin(Math.round(snapshot.margin))
 
     updateState(snapshot.game_props.state);
     updateSecurities(snapshot.securities);
@@ -107,6 +112,8 @@ const Game = () => {
                 securities={securities}
                 existing_inventory={inventory}
                 existing_cash={cash}
+                existing_position_value={positionValue}
+                existing_margin ={margin}
               />
             </div>
             <div className="flex-grow border-white border-2 overflow-y-auto">
