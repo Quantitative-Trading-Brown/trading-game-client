@@ -8,7 +8,7 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useSocket } from "@/contexts/SocketContext";
@@ -19,7 +19,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-  Tooltip,
+  Tooltip
 );
 
 type GraphProps = {
@@ -48,9 +48,9 @@ const Graph = (props: GraphProps) => {
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderWidth: 2,
-        tension: 0.4, // Makes the line smooth
-      },
-    ],
+        tension: 0.4 // Makes the line smooth
+      }
+    ]
   };
 
   const options = {
@@ -59,22 +59,22 @@ const Graph = (props: GraphProps) => {
     plugins: {
       tooltip: {
         // mode: "nearest",
-        intersect: false,
-      },
+        intersect: false
+      }
     },
     scales: {
       x: {
         display: false,
         ticks: {
-          color: "white", // Set text color for X-axis labels
-        },
+          color: "white" // Set text color for X-axis labels
+        }
       },
       y: {
         ticks: {
-          color: "white",
-        },
-      },
-    },
+          color: "white"
+        }
+      }
+    }
   };
   const updateChart = (security: number, label: string, y: number) => {
     setTimeLabels((prevLabels) => {
@@ -83,7 +83,7 @@ const Graph = (props: GraphProps) => {
       // Trim to keep only the last 30 elements
       return {
         ...prevLabels,
-        [security]: updatedLabels.slice(-30),
+        [security]: updatedLabels.slice(-30)
       };
     });
 
@@ -93,7 +93,7 @@ const Graph = (props: GraphProps) => {
       // Trim to keep only the last 30 elements
       return {
         ...prevData,
-        [security]: updatedData.slice(-30),
+        [security]: updatedData.slice(-30)
       };
     });
   };
