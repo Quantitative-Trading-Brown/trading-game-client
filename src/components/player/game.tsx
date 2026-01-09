@@ -54,8 +54,8 @@ const Game = () => {
     setPastNews(snapshot.past_news);
     setInventory(snapshot.inventory);
     setCash(snapshot.cash);
-    setPositionValue(Math.round(snapshot.position_value))
-    setMargin(Math.round(snapshot.margin))
+    setPositionValue(Math.round(snapshot.position_value));
+    setMargin(Math.round(snapshot.margin));
 
     updateState(snapshot.game_props.state);
     updateSecurities(snapshot.securities);
@@ -87,103 +87,108 @@ const Game = () => {
     return "Loading...";
   }
 
-  let Dash;
-  switch (gameState) {
-    case 0:
-      Dash = (
-        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex-grow flex flex-auto justify-center gap-2">
-            <div className="border-white border-2 w-full">
-              <LobbyCell />
+  const renderDash = () => {
+    switch (gameState) {
+      case 0:
+        return (
+          <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
+            <div className="flex-grow flex flex-auto justify-center gap-2">
+              <div className="border-white border-2 w-full">
+                <LobbyCell />
+              </div>
             </div>
-          </div>
-          <div className="flex-1 border-white border-2 overflow-y-auto overscroll-contain">
-            <NewsCell admin={false} news={pastnews} />
-          </div>
-        </div>
-      );
-      break;
-    case 1:
-      Dash = (
-        <div className="flex flex-auto flex-wrap justify-center gap-2 w-full min-h-0">
-          <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
-            <div className="border-white border-2">
-              <InventoryCell
-                securities={securities}
-                existing_inventory={inventory}
-                existing_cash={cash}
-                existing_position_value={positionValue}
-                existing_margin ={margin}
-              />
-            </div>
-            <div className="flex-grow border-white border-2 overflow-y-auto">
+            <div className="flex-1 border-white border-2 overflow-y-auto overscroll-contain">
               <NewsCell admin={false} news={pastnews} />
             </div>
           </div>
-          <div className="flex flex-grow gap-2 overflow-x-auto h-full">
-            <div className="flex flex-col gap-2 min-w-[650px]">
+        );
+        break;
+      case 1:
+        return (
+          <div className="flex flex-auto flex-wrap justify-center gap-2 w-full min-h-0">
+            <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
               <div className="border-white border-2">
-                <SelectorCell
+                <InventoryCell
                   securities={securities}
-                  onChange={changeSelectedSecurity}
+                  existing_inventory={inventory}
+                  existing_cash={cash}
+                  existing_position_value={positionValue}
+                  existing_margin={margin}
                 />
               </div>
-              <div className="border-white border-2">
-                <TradeCell selectedSecurity={selectedSecurity} />
-              </div>
               <div className="flex-grow border-white border-2 overflow-y-auto">
-                <OrdersCell securities={securities} existingOrders={orders} />
+                <NewsCell admin={false} news={pastnews} />
               </div>
             </div>
-            <div className="flex flex-col flex-grow h-full">
-              <div className="flex-grow border-white border-2 overflow-y-auto">
-                <OrderbookCell
-                  existingOrders={orderbooks}
-                  selectedSecurity={selectedSecurity}
-                />
+            <div className="flex flex-grow gap-2 overflow-x-auto h-full">
+              <div className="flex flex-col gap-2 min-w-[650px]">
+                <div className="border-white border-2">
+                  <SelectorCell
+                    securities={securities}
+                    onChange={changeSelectedSecurity}
+                  />
+                </div>
+                <div className="border-white border-2">
+                  <TradeCell selectedSecurity={selectedSecurity} />
+                </div>
+                <div className="flex-grow border-white border-2 overflow-y-auto">
+                  <OrdersCell securities={securities} existingOrders={orders} />
+                </div>
+              </div>
+              <div className="flex flex-col flex-grow h-full">
+                <div className="flex-grow border-white border-2 overflow-y-auto">
+                  <OrderbookCell
+                    existingOrders={orderbooks}
+                    selectedSecurity={selectedSecurity}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-      break;
-    case 2:
-      Dash = (
-        <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex-grow flex flex-col flex-auto gap-2">
-            <div className="border-white border-2 w-full h-full">
-              <ResolutionCell />
+        );
+        break;
+      case 2:
+        return (
+          <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
+            <div className="flex-grow flex flex-col flex-auto gap-2">
+              <div className="border-white border-2 w-full h-full">
+                <ResolutionCell />
+              </div>
+            </div>
+            <div className="flex-1 min-w-[350px] border-white border-2 overflow-y-auto overscroll-contain">
+              <NewsCell admin={false} news={pastnews} />
             </div>
           </div>
-          <div className="flex-1 min-w-[350px] border-white border-2 overflow-y-auto overscroll-contain">
-            <NewsCell admin={false} news={pastnews} />
-          </div>
-        </div>
-      );
-      break;
-    case 3:
-      Dash = (
-        <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
-          <div className="flex-col flex-grow flex flex-auto justify-center gap-2 w-full">
-            <div className="flex-grow border-white border-2 w-full">
-              <LeaderboardCell />
-            </div>
-            <div
-              className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
-              onClick={() => {
-                document.location.href = "/";
-              }}
-            >
-              <h1 className="text-xl">Back to Home</h1>
+        );
+        break;
+      case 3:
+        return (
+          <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
+            <div className="flex-col flex-grow flex flex-auto justify-center gap-2 w-full">
+              <div className="flex-grow border-white border-2 w-full">
+                <LeaderboardCell />
+              </div>
+              <div
+                className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
+                onClick={() => {
+                  document.location.href = "/";
+                }}
+              >
+                <h1 className="text-xl">Back to Home</h1>
+              </div>
             </div>
           </div>
-        </div>
-      );
-      break;
-  }
+        );
+        break;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center h-screen gap-2 p-2">{Dash}</div>
+    <div className="flex flex-col items-center h-screen gap-2 p-2">
+      {renderDash()}
+    </div>
   );
 };
 

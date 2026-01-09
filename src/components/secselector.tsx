@@ -22,20 +22,6 @@ const SelectorCell: React.FC<SelectorBoxProps> = ({ securities, onChange }) => {
     onChange(e.target.value);
   };
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("leaderboard", (rankings) => {
-        setRankings(rankings);
-      });
-
-      socket.emit("leaderboard");
-
-      return () => {
-        socket.off("leaderboard");
-      };
-    }
-  }, [socket]);
-
   return (
     <div className="p-4 flex flex-col gap-4 h-full">
       <h2 className="font-bold text-xl">Select Security</h2>

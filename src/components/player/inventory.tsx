@@ -70,7 +70,11 @@ const InventoryCell: React.FC<InventoryProps> = ({
         </div>
 
         <div>
-          <span>Minimum Equity: ${margin}</span>
+          <span>Equity Required: ${margin}</span>
+        </div>
+
+        <div>
+          <span>Equity Excess: ${Number(cash) + Number(positionValue) - Number(margin)}</span>
         </div>
       </div>
       <hr className="my-4" />
