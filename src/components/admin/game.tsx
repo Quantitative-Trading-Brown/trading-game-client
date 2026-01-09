@@ -33,6 +33,7 @@ const Game = () => {
   const { socket } = useSocket();
 
   const updateProps = (props: GameProps) => {
+    setGameState(Number(props.state));
     setCode(props.code);
   };
 
@@ -43,22 +44,19 @@ const Game = () => {
 
   const updateState = (state: string) => {
     setGameState(Number(state));
-    setLoading(false);
   };
 
   useEffect(() => {
     if (socket) {
       socket.on("snapshot", (snapshot) => {
+        updateProps(snapshot.game_props);
         setOrderbooks(snapshot.orderbooks);
         setPastNews(snapshot.past_news);
-        updateState(snapshot.game_state);
-        updateProps(snapshot.game_props);
         updateSecurities(snapshot.securities);
+        setLoading(false);
       });
 
       socket.on("gamestate_update", updateState);
-      socket.on("gameprops_update", updateProps);
-
       socket.on("securities_update", updateSecurities);
 
       socket.emit("snapshot");
