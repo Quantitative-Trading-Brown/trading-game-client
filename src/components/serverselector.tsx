@@ -8,8 +8,10 @@ import { Server } from "@/utils/Types";
 
 async function attemptConnect(ip: string) {
   try {
-    const response = await axios.get(ip);
-    return response.status === 204; // adjust your expected status
+    const response = await axios.get(ip, {
+      timeout: 5000, // 5 second timeout
+    });
+    return response.status === 204;
   } catch (error) {
     return false;
   }
@@ -23,26 +25,22 @@ async function fetchServers() {
       documents.map((doc) => [doc.id, doc.data()])
     );
 
+    // Return servers immediately with unknown status
     const servers = Object.fromEntries(
-      await Promise.all(
-        Object.entries(data).map(async ([server_id, info]) => {
-          const up = await attemptConnect(info.ip);
-
-          return [
-            server_id,
-            {
-              name: info.name,
-              ip: info.ip,
-              up: up
-            }
-          ];
-        })
-      )
+      Object.entries(data).map(([server_id, info]) => [
+        server_id,
+        {
+          name: info.name,
+          ip: info.ip,
+          up: null // null means checking
+        }
+      ])
     );
 
     return servers;
   } catch (error) {
     console.error("Error fetching Firestore data:", error);
+    return {};
   }
 }
 
@@ -55,9 +53,25 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
   const [selected, setSelected] = useState("");
   const [open, setOpen] = useState(false);
 
+  const checkServerStatus = async (serverId: string, ip: string) => {
+    const up = await attemptConnect(ip);
+    setServers((prev) => ({
+      ...prev,
+      [serverId]: {
+        ...prev[serverId],
+        up
+      }
+    }));
+  };
+
   const reloadServers = async () => {
     const servers = await fetchServers();
     setServers(servers);
+
+    // Start checking all servers in parallel
+    Object.entries(servers).forEach(([serverId, server]) => {
+      checkServerStatus(serverId, server.ip);
+    });
   };
 
   useEffect(() => {
@@ -68,11 +82,11 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
   useEffect(() => {
     if (hasAutoSelected.current) return;
     if (!servers || Object.keys(servers).length === 0) return;
-    hasAutoSelected.current = true;
 
-    const firstUpServer = Object.keys(servers).find((key) => servers[key].up);
+    const firstUpServer = Object.keys(servers).find((key) => servers[key].up === true);
 
     if (firstUpServer) {
+      hasAutoSelected.current = true;
       handleServerSelect(firstUpServer);
     }
   }, [servers]);
@@ -132,7 +146,9 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
                     <div className="text-sm text-gray-500">{server.ip}</div>
                   </div>
                   <div>
-                    {server.up ? (
+                    {server.up === null ? (
+                      <span className="text-yellow-500">CHECKING...</span>
+                    ) : server.up ? (
                       <span className="text-green-500">UP</span>
                     ) : (
                       <span className="text-red-500">DOWN</span>
