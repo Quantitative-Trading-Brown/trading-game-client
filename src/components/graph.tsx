@@ -8,6 +8,7 @@ import {
   LineElement,
   Title,
   Tooltip,
+  ChartOptions,
   Legend
 } from "chart.js";
 import { Line } from "react-chartjs-2";
@@ -23,7 +24,7 @@ ChartJS.register(
 );
 
 type GraphProps = {
-  selectedSecurity: number;
+  selectedSecurity: string;
 };
 
 type PriceVals = {
@@ -54,7 +55,7 @@ const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
     ]
   });
 
-  const options = {
+  const options: ChartOptions<'line'> = {
     animation: false,
     responsive: true,
     maintainAspectRatio: false,
@@ -78,7 +79,7 @@ const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
     }
   };
 
-  const updateChart = (security: number | string, label: string, y: number) => {
+  const updateChart = (security: string, label: string, y: number) => {
     setTimeLabels((prevLabels) => {
       const updatedLabels = [...(prevLabels[security] || []), label];
       return {
@@ -97,7 +98,7 @@ const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("prices", (prices: PriceVals) => {
+      socket.on("prices", (prices: { [key: string]: number }) => {
         var d = new Date();
         var n = d.toLocaleTimeString();
         for (const sec_id in prices) {
