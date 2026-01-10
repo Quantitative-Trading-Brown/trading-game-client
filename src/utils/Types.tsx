@@ -1,7 +1,7 @@
 type Server = {
   name: string;
   ip: string;
-  up: boolean;
+  up: boolean | null;
 };
 
 type GameProps = {

@@ -49,7 +49,7 @@ type Props = {
 };
 
 const ServerModal: React.FC<Props> = ({ onSelect }) => {
-  const [servers, setServers] = useState<Record<string, any>>({});
+  const [servers, setServers] = useState<Record<string, Server>>({});
   const [selected, setSelected] = useState("");
   const [open, setOpen] = useState(false);
 
