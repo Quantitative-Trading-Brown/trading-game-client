@@ -23,42 +23,43 @@ ChartJS.register(
 );
 
 type GraphProps = {
-  selected: number;
-  securities: SecurityProps;
+  selectedSecurity: number;
 };
 
 type PriceVals = {
-  [key: number]: number[];
+  [key: string]: number[];
 };
+
 type TimeVals = {
-  [key: number]: string[];
+  [key: string]: string[];
 };
 
-const Graph = (props: GraphProps) => {
+const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
   const { socket } = useSocket();
-  const [securityData, setSecurityData] = useState<PriceVals>({});
-  const [timeLabels, setTimeLabels] = useState<TimeVals>({});
+  const [securityData, setSecurityData] = useState<PriceVals>({ test: [5] });
+  const [timeLabels, setTimeLabels] = useState<TimeVals>({ test: ["a"] });
+  const [viewMode, setViewMode] = useState<"single" | "stacked">("single");
 
-  const chartData = {
-    labels: timeLabels[props.selected],
+  const createChartData = (securityId: number | string) => ({
+    labels: timeLabels[securityId] || [],
     datasets: [
       {
-        label: "Price",
-        data: securityData[props.selected],
+        label: `Security ${securityId}`,
+        data: securityData[securityId] || [],
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderWidth: 2,
-        tension: 0.4 // Makes the line smooth
+        tension: 0
       }
     ]
-  };
+  });
 
   const options = {
+    animation: false,
     responsive: true,
-    maintainAspectRatio: false, // Disable aspect ratio to use parent height
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
-        // mode: "nearest",
         intersect: false
       }
     },
@@ -66,7 +67,7 @@ const Graph = (props: GraphProps) => {
       x: {
         display: false,
         ticks: {
-          color: "white" // Set text color for X-axis labels
+          color: "white"
         }
       },
       y: {
@@ -76,21 +77,17 @@ const Graph = (props: GraphProps) => {
       }
     }
   };
-  const updateChart = (security: number, label: string, y: number) => {
+
+  const updateChart = (security: number | string, label: string, y: number) => {
     setTimeLabels((prevLabels) => {
       const updatedLabels = [...(prevLabels[security] || []), label];
-
-      // Trim to keep only the last 30 elements
       return {
         ...prevLabels,
         [security]: updatedLabels.slice(-30)
       };
     });
-
     setSecurityData((prevData) => {
       const updatedData = [...(prevData[security] || []), y];
-
-      // Trim to keep only the last 30 elements
       return {
         ...prevData,
         [security]: updatedData.slice(-30)
@@ -100,25 +97,62 @@ const Graph = (props: GraphProps) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("price", (security: number, price: number) => {
+      socket.on("prices", (prices: PriceVals) => {
         var d = new Date();
         var n = d.toLocaleTimeString();
-        updateChart(security, n, price);
+        for (const sec_id in prices) {
+          updateChart(sec_id, n, prices[sec_id]);
+        }
       });
-
       return () => {
-        socket.off("price");
+        socket.off("prices");
       };
     }
   }, [socket]);
 
+  const allSecurityIds = Object.keys(securityData).filter(
+    (id) => id !== "test"
+  );
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow h-0">
-        <Line data={chartData} options={options} className="h-full" />
+      <div className="flex justify-between items-center p-5">
+        <h2 className="text-xl font-bold">Graphs</h2>
+        <button
+          onClick={() =>
+            setViewMode(viewMode === "single" ? "stacked" : "single")
+          }
+          className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+        >
+          {viewMode === "single" ? "Show All Stacked" : "Show Single"}
+        </button>
       </div>
+
+      {viewMode === "single" ? (
+        <div className="flex-grow flex flex-col h-0 p-2">
+          <div className="h-full">
+            <div className="h-full">
+              <Line
+                data={createChartData(selectedSecurity)}
+                options={options}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-grow h-0 overflow-y-auto">
+          {allSecurityIds.map((secId) => (
+            <div key={secId} className="border border-gray-600 p-2">
+              <h3 className="text-white text-sm mb-1">Security {secId}</h3>
+              <div className="">
+                <Line data={createChartData(secId)} options={options} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Graph;
+export default GraphCell;

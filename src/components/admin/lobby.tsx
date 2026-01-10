@@ -3,12 +3,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
-import {Preset} from "@/utils/Types"
+import { Preset } from "@/utils/Types";
 
 const Lobby = () => {
   const { socket } = useSocket();
   const [presets, setPresets] = useState<Preset[]>([]);
   const [chosen, setChosen] = useState<string>("");
+
+  const [allowJoin, setAllowJoin] = useState(true);
 
   useEffect(() => {
     if (socket) {
@@ -26,9 +28,11 @@ const Lobby = () => {
 
   const handleGameStart = () => {
     if (socket && chosen) {
-      socket.emit("startgame", chosen);
+      socket.emit("startgame", chosen, allowJoin);
     }
   };
+
+  const toggleSwitch = () => setAllowJoin(!allowJoin);
 
   return (
     <div className="flex flex-col h-full p-5">
@@ -60,6 +64,21 @@ const Lobby = () => {
             </button>
           );
         })}
+      </div>
+      <div className="flex gap-2 p-4 items-center">
+        <span>Allow new players to join during game:</span>
+        <div
+          className={`w-12 h-6 flex rounded-xl items-center p-1 cursor-pointer ${
+            allowJoin ? "bg-red-500" : "bg-gray-400"
+          }`}
+          onClick={toggleSwitch}
+        >
+          <div
+            className={`bg-white w-4 h-4 rounded-xl shadow-md transform duration-300 ${
+              allowJoin ? "translate-x-6" : ""
+            }`}
+          ></div>
+        </div>
       </div>
 
       <div className="flex-grow"></div>

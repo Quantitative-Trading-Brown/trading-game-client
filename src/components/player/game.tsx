@@ -10,6 +10,7 @@ import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
 import SelectorCell from "@/components/secselector";
+import GraphCell from "@/components/graph";
 
 import LobbyCell from "@/components/player/lobby";
 import InventoryCell from "@/components/player/inventory";
@@ -135,12 +136,15 @@ const Game = () => {
                   <OrdersCell securities={securities} existingOrders={orders} />
                 </div>
               </div>
-              <div className="flex flex-col flex-grow h-full">
-                <div className="flex-grow border-white border-2 overflow-y-auto">
+              <div className="flex flex-col flex-grow gap-2 h-full">
+                <div className="border-white border-2 overflow-y-auto resize-y min-h-[300px]">
                   <OrderbookCell
                     existingOrders={orderbooks}
                     selectedSecurity={selectedSecurity}
                   />
+                </div>
+                <div className="border-white border-2 overflow-y-auto flex-1">
+                  <GraphCell selectedSecurity={selectedSecurity} />
                 </div>
               </div>
             </div>

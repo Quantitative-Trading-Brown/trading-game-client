@@ -80,9 +80,9 @@ const Home = () => {
       window.location.href = "/player";
     } catch (err: any) {
       if (err.response) {
-        setStatus(`Error creating game: ${err.response.data.error}`);
+        setStatus(`Error joining game: ${err.response.data.error}`);
       } else {
-        setStatus(`Error creating game: ${err}`);
+        setStatus(`Error joining game: ${err}`);
       }
     }
   };
