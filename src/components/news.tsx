@@ -7,16 +7,18 @@ type NewsProps = {
   news: [string, string][];
 };
 
-
-const News = (props : NewsProps) => {
+const News = (props: NewsProps) => {
   const [messages, setMessages] = useState<[string, string][]>([]);
   const [buffer, setBuffer] = useState("");
   const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
-      socket.on("news", (msg_entry : [string, string]) => {
-        setMessages((prevMessages) => [...prevMessages, msg_entry])
+      socket.on("news", (msg_entry: [string, string]) => {
+        setMessages((prevMessages) => {
+          const updated = [...prevMessages, msg_entry];
+          return updated.slice(-30); // Keep only the last 30 messages
+        });
       });
 
       return () => {
@@ -43,26 +45,34 @@ const News = (props : NewsProps) => {
   };
 
   return (
-    <div className="flex flex-col text-white p-4 h-full shadow-lg">
-      <h2 className="text-xl font-bold">News</h2>
-      <div className="flex-grow space-y-2 overflow-y-auto w-full pt-4">
-        {messages.map((data, index) => (
-          <div key={index} className="flex justify-between items-center">
-            <p className="whitespace-normal text-sm text-gray-300 w-[70%]">{data[1]}</p>
-            <span className="whitespace-normal text-xs text-gray-500 w-[20%]">{data[0]}</span>
-          </div>
-        ))}
+    <div className="flex flex-col text-white p-4 shadow-lg min-h-0">
+      <h2 className="text-xl font-bold flex-shrink-0">News</h2>
+      <div className="flex-1 overflow-y-auto w-full pt-4 space-y-2">
+        {messages
+          .map((data, index) => (
+            <div key={index} className="flex justify-between items-center">
+              <p className="whitespace-normal text-sm text-gray-300 w-[70%]">
+                {data[1]}
+              </p>
+              <span className="whitespace-normal text-xs text-gray-500 w-[20%]">
+                {data[0]}
+              </span>
+            </div>
+          ))
+          .reverse()}
       </div>
-      {props.admin ? (<div className="w-full">
-        <input
-          type="text"
-          value={buffer}
-          onKeyPress={handleKeyPress}
-          onChange={(e) => setBuffer(e.target.value)}
-          placeholder="Make some news..."
-          className="w-full bg-gray-700 p-1"
-        />
-      </div>) : null}
+      {props.admin && (
+        <div className="w-full flex-shrink-0 pt-2">
+          <input
+            type="text"
+            value={buffer}
+            onKeyPress={handleKeyPress}
+            onChange={(e) => setBuffer(e.target.value)}
+            placeholder="Make some news..."
+            className="w-full bg-gray-700 p-1"
+          />
+        </div>
+      )}
     </div>
   );
 };

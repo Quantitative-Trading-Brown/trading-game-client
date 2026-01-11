@@ -125,8 +125,8 @@ const Game = () => {
         break;
       case 1:
         return (
-          <div className="flex flex-auto flex-wrap justify-center gap-2 w-full min-h-0">
-            <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
+          <div className="flex flex-auto flex-wrap justify-center gap-2 w-full h-full">
+            <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px] h-full">
               {playerActive == 1 && (
                 <div className="border-white border-2">
                   <InventoryCell

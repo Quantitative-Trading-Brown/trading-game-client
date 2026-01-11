@@ -61,20 +61,22 @@ const TradeCell: React.FC<TradeBoxProps> = ({ selectedSecurity }) => {
         </button>
       </div>
 
-      <div className="flex justify-between w-full">
-        <div className="flex justify-left items-center">
-          <span className="mr-2">Quantity:</span>
+      <div className="flex justify-between items-center w-full gap-4">
+        <div className="flex items-center flex-shrink-0">
+          <span className="mr-2 whitespace-nowrap">Quantity (max 100):</span>
           <input
             id="quantity"
             type="number"
             placeholder="1"
             onChange={ChangeQuantity}
-            className="px-2 py-1 bg-gray-700"
+            className="px-2 py-1 bg-gray-700 w-[100px]"
           />
         </div>
         {orderType === "limit" && (
-          <div className="flex items-center gap-2">
-            <label htmlFor="price">Price:</label>
+          <div className="flex flex-grow items-center justify-end gap-2">
+            <label htmlFor="price" className="whitespace-nowrap">
+              Price:
+            </label>
             <input
               id="price"
               type="number"
