@@ -24,7 +24,7 @@ const TradeCell: React.FC<TradeBoxProps> = ({ selectedSecurity }) => {
   };
 
   const ChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setQuantity(Math.max(1, Number(e.target.value)));
+    setQuantity(Math.min(100, Math.max(1, Number(e.target.value))));
   const ChangePrice = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPrice(Math.max(0, Number(e.target.value)));
 

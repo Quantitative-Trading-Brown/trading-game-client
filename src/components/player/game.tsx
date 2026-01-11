@@ -17,6 +17,7 @@ import InventoryCell from "@/components/player/inventory";
 import ResolutionCell from "@/components/player/resolution";
 import OrdersCell from "@/components/player/orders";
 import TradeCell from "@/components/player/trade";
+import { MarginCall, Bankruptcy } from "@/components/player/warnings";
 
 const Game = () => {
   const [username, setUsername] = useState("");
@@ -32,9 +33,14 @@ const Game = () => {
   const [cash, setCash] = useState(0);
   const [positionValue, setPositionValue] = useState(0);
   const [margin, setMargin] = useState(0);
+  const [showMarginCall, setShowMarginCall] = useState(false);
+  const [showBankruptcy, setShowBankruptcy] = useState(false);
+  const [bankruptciesRemaining, setBankruptciesRemaining] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [gameState, setGameState] = useState<number>(0);
+  const [playerActive, setPlayerActive] = useState<number>(1);
+
   const router = useRouter();
 
   const { socket } = useSocket();
@@ -50,9 +56,12 @@ const Game = () => {
 
   const updateSnapshot = (snapshot: any) => {
     setUsername(snapshot.username);
+    setPlayerActive(Number(snapshot.active));
+    setPastNews(snapshot.past_news);
+
     setOrderbooks(snapshot.orderbooks);
     setOrders(snapshot.orders);
-    setPastNews(snapshot.past_news);
+
     setInventory(snapshot.inventory);
     setCash(snapshot.cash);
     setPositionValue(Math.round(snapshot.position_value));
@@ -67,16 +76,26 @@ const Game = () => {
   useEffect(() => {
     if (socket) {
       socket.on("snapshot", updateSnapshot);
-
       socket.on("gamestate_update", updateState);
-      socket.on("securities_update", updateSecurities);
+      socket.on("margin_call", () => {
+        setShowMarginCall(true);
+      });
+      socket.on("bankruptcy", (remaining) => {
+        setShowBankruptcy(true);
+        setBankruptciesRemaining(remaining);
+      });
+      socket.on("elimination", () => {
+        setPlayerActive(0);
+      });
 
       socket.emit("snapshot");
 
       return () => {
         socket.off("snapshot");
         socket.off("gamestate_update");
-        socket.off("securities_update");
+        socket.off("margin_call");
+        socket.off("bankruptcy");
+        socket.off("elimination");
       };
     }
   }, [socket]);
@@ -108,34 +127,41 @@ const Game = () => {
         return (
           <div className="flex flex-auto flex-wrap justify-center gap-2 w-full min-h-0">
             <div className="flex flex-1 flex-col gap-2 w-full min-w-[400px]">
-              <div className="border-white border-2">
-                <InventoryCell
-                  securities={securities}
-                  existing_inventory={inventory}
-                  existing_cash={cash}
-                  existing_position_value={positionValue}
-                  existing_margin={margin}
-                />
-              </div>
+              {playerActive == 1 && (
+                <div className="border-white border-2">
+                  <InventoryCell
+                    securities={securities}
+                    existing_inventory={inventory}
+                    existing_cash={cash}
+                    existing_position_value={positionValue}
+                    existing_margin={margin}
+                  />
+                </div>
+              )}
               <div className="flex-grow border-white border-2 overflow-y-auto">
                 <NewsCell admin={false} news={pastnews} />
               </div>
             </div>
             <div className="flex flex-grow gap-2 overflow-x-auto h-full">
-              <div className="flex flex-col gap-2 min-w-[650px]">
-                <div className="border-white border-2">
-                  <SelectorCell
-                    securities={securities}
-                    onChange={changeSelectedSecurity}
-                  />
+              {playerActive === 1 && (
+                <div className="flex flex-col gap-2 min-w-[650px]">
+                  <div className="border-white border-2">
+                    <SelectorCell
+                      securities={securities}
+                      onChange={changeSelectedSecurity}
+                    />
+                  </div>
+                  <div className="border-white border-2">
+                    <TradeCell selectedSecurity={selectedSecurity} />
+                  </div>
+                  <div className="flex-grow border-white border-2 overflow-y-auto">
+                    <OrdersCell
+                      securities={securities}
+                      existingOrders={orders}
+                    />
+                  </div>
                 </div>
-                <div className="border-white border-2">
-                  <TradeCell selectedSecurity={selectedSecurity} />
-                </div>
-                <div className="flex-grow border-white border-2 overflow-y-auto">
-                  <OrdersCell securities={securities} existingOrders={orders} />
-                </div>
-              </div>
+              )}
               <div className="flex flex-col flex-grow gap-2 h-full">
                 <div className="border-white border-2 overflow-y-auto resize-y min-h-[300px]">
                   <OrderbookCell
@@ -175,7 +201,7 @@ const Game = () => {
               <div
                 className="flex justify-center items-center border-white border-2 w-full min-h-[5em] cursor-pointer"
                 onClick={() => {
-                  document.location.href = "/";
+                  router.push("/");
                 }}
               >
                 <h1 className="text-xl">Back to Home</h1>
@@ -192,6 +218,14 @@ const Game = () => {
   return (
     <div className="flex flex-col items-center h-screen gap-2 p-2">
       {renderDash()}
+      {/* Margin Call Modal */}
+      {showMarginCall && <MarginCall hide={() => setShowMarginCall(false)} />}
+      {showBankruptcy && (
+        <Bankruptcy
+          remaining={bankruptciesRemaining}
+          hide={() => setShowBankruptcy(false)}
+        />
+      )}
     </div>
   );
 };

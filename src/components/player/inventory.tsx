@@ -16,15 +16,27 @@ const InventoryCell: React.FC<InventoryProps> = ({
   existing_inventory,
   existing_cash,
   existing_position_value,
-  existing_margin,
+  existing_margin
 }) => {
   const [cash, setCash] = useState(existing_cash);
   const [positionValue, setPositionValue] = useState(existing_position_value);
   const [margin, setMargin] = useState(existing_margin);
-
   const [inventory, setInventory] = useState(existing_inventory);
-  const { socket } = useSocket();
 
+  // Pass down outer component changes
+  useEffect(() => {
+    setCash(existing_cash);
+    setPositionValue(existing_position_value);
+    setInventory(existing_inventory);
+    setMargin(existing_margin);
+  }, [
+    existing_margin,
+    existing_inventory,
+    existing_position_value,
+    existing_cash
+  ]);
+
+  const { socket } = useSocket();
   useEffect(() => {
     if (socket) {
       socket.on("inventory", (update) => {
@@ -53,19 +65,22 @@ const InventoryCell: React.FC<InventoryProps> = ({
     }
   }, [socket]);
 
+  let equity = Number(cash) + Number(positionValue);
+  let excess = equity - Number(margin);
+
   return (
     <div className="flex flex-col text-white p-4 mx-auto rounded-lg shadow-lg">
       <h2 className="text-xl font-bold mb-4">Account</h2>
       <div className="text-lg space-y-2 overflow-y-auto h-full">
         <div>
-          <span>Equity: ${Number(cash) + Number(positionValue)}</span>
+          <span>Equity: ${equity}</span>
         </div>
         <div className="pl-7">
           <div>
-            <span>Cash: ${cash ?? 0}</span>
+            <span>Cash: ${cash}</span>
           </div>
           <div>
-            <span>Position Value: ${positionValue ?? 0}</span>
+            <span>Position Value: ${positionValue}</span>
           </div>
         </div>
 
@@ -74,7 +89,10 @@ const InventoryCell: React.FC<InventoryProps> = ({
         </div>
 
         <div>
-          <span>Equity Excess: ${Number(cash) + Number(positionValue) - Number(margin)}</span>
+          <span>Equity Excess: </span>
+          <span className={`${excess < 0 ? "text-red-500" : "text-white"}`}>
+            ${excess}
+          </span>
         </div>
       </div>
       <hr className="my-4" />

@@ -37,8 +37,8 @@ type TimeVals = {
 
 const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
   const { socket } = useSocket();
-  const [securityData, setSecurityData] = useState<PriceVals>({ test: [5] });
-  const [timeLabels, setTimeLabels] = useState<TimeVals>({ test: ["a"] });
+  const [securityData, setSecurityData] = useState<PriceVals>({});
+  const [timeLabels, setTimeLabels] = useState<TimeVals>({});
   const [viewMode, setViewMode] = useState<"single" | "stacked">("single");
 
   const createChartData = (securityId: number | string) => ({
@@ -55,7 +55,7 @@ const GraphCell: React.FC<GraphProps> = ({ selectedSecurity }) => {
     ]
   });
 
-  const options: ChartOptions<'line'> = {
+  const options: ChartOptions<"line"> = {
     animation: false,
     responsive: true,
     maintainAspectRatio: false,

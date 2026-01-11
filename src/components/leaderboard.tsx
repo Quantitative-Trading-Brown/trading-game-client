@@ -27,7 +27,8 @@ const LeaderboardCell = () => {
           <tr className="bg-black">
             <th className="text-left px-4 py-2">Ranking</th>
             <th className="text-left px-4 py-2">Username</th>
-            <th className="text-left px-4 py-2">Score</th>
+            <th className="text-left px-4 py-2">Bankruptcies</th>
+            <th className="text-left px-4 py-2">Ending $</th>
           </tr>
         </thead>
         <tbody className="border-separate">
@@ -36,6 +37,7 @@ const LeaderboardCell = () => {
               <td className="px-4 h-10">{index + 1}</td>
               <td className="px-4 h-10">{player_info[0]}</td>
               <td className="px-4 h-10">{player_info[1]}</td>
+              <td className="px-4 h-10">{player_info[2]}</td>
             </tr>
           ))}
         </tbody>
