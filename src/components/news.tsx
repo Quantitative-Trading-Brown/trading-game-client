@@ -45,7 +45,7 @@ const News = (props: NewsProps) => {
   };
 
   return (
-    <div className="flex flex-col text-white p-4 shadow-lg min-h-0">
+    <div className="flex flex-col text-white p-4 shadow-lg h-full">
       <h2 className="text-xl font-bold flex-shrink-0">News</h2>
       <div className="flex-1 overflow-y-auto w-full pt-4 space-y-2">
         {messages

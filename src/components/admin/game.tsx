@@ -115,8 +115,8 @@ const Game = () => {
                 />
               </div>
             </div>
-            <div className="max-w-[500px] flex flex-col flex-1 gap-2">
-              <div className=" flex-grow border-white border-2 overflow-y-auto">
+            <div className="max-w-[500px] flex flex-col flex-1 gap-2 h-full">
+              <div className="flex-grow border-white border-2 overflow-y-auto">
                 <NewsCell admin={true} news={pastnews} />
               </div>
               <div className="border-white border-2">
