@@ -207,13 +207,13 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
                   <tr key={symbol} className="border-b border-gray-700">
                     <td className="py-3 text-white font-medium">{symbol}</td>
                     <td className="py-3 text-right text-green-200">
-                      {symbolBestBid ? symbolBestBid.price : '-'}
+                      {symbolBestBid ? symbolBestBid.price.toFixed(2) : '-'}
                     </td>
                     <td className="py-3 text-right text-green-200">
                       {symbolBestBid ? symbolBestBid.quantity : '-'}
                     </td>
                     <td className="py-3 text-right text-red-200">
-                      {symbolBestAsk ? symbolBestAsk.price : '-'}
+                      {symbolBestAsk ? symbolBestAsk.price.toFixed(2) : '-'}
                     </td>
                     <td className="py-3 text-right text-red-200">
                       {symbolBestAsk ? symbolBestAsk.quantity : '-'}
