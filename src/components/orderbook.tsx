@@ -67,7 +67,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
       .map(([price, vol]) => {
         cumulative += Number(vol);
         return {
-          price: Number(price),
+          price: Number(price).toFixed(2),
           quantity: Number(vol),
           total: cumulative
         };
@@ -84,7 +84,7 @@ const OrderbookCell: React.FC<OrderbookProps> = ({
       .map(([price, vol]) => {
         cumulative += -Number(vol);
         return {
-          price: Number(price),
+          price: Number(price).toFixed(2),
           quantity: -Number(vol),
           total: cumulative
         };
