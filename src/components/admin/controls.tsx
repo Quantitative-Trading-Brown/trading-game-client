@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 
 type ControlProps = {
@@ -7,12 +6,11 @@ type ControlProps = {
 };
 
 const Controls: React.FC<ControlProps> = ({ code }) => {
-  const [paused, setPaused] = useState({});
   const { socket } = useSocket();
 
   const handleEndGame = () => {
     if (socket) {
-      socket.emit("endgame");
+      socket.emit("endgame", {});
     }
   };
 

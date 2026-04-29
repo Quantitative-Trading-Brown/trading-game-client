@@ -116,7 +116,7 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
 
       {/* Full-screen modal */}
       {open && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-800 w-11/12 max-w-2xl p-6 relative max-h-[90vh] overflow-auto">
             <h2 className="text-xl font-semibold mb-4">Select a Server</h2>
             <div className="absolute top-3 right-3 flex gap-4">

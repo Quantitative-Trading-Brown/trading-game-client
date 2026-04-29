@@ -101,7 +101,7 @@ const InventoryCell: React.FC<InventoryProps> = ({
         {Object.entries(securities).map(([sec_id, props]: [any, any]) => (
           <div
             key={sec_id}
-            className="flex justify-between items-center gaps-5"
+            className="flex justify-between items-center gap-5"
           >
             <span>
               {sec_id}: {inventory[sec_id] || 0}

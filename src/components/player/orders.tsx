@@ -41,13 +41,13 @@ const OrdersCell: React.FC<OrderProps> = ({ securities, existingOrders }) => {
     });
 
     return () => {
-      socket.off("orders");
+      socket.off("order_update");
     };
   }, [socket]);
 
   const cancelOrder = (order_id: string) => {
     if (!socket) return;
-    socket.emit("cancel", order_id);
+    socket.emit("cancel", { order_id });
   };
 
   return (

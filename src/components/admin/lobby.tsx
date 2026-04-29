@@ -18,7 +18,7 @@ const Lobby = () => {
         setPresets(presets);
       });
 
-      socket.emit("presets");
+      socket.emit("presets", {});
 
       return () => {
         socket.off("presets");
@@ -28,7 +28,7 @@ const Lobby = () => {
 
   const handleGameStart = () => {
     if (socket && chosen) {
-      socket.emit("startgame", chosen, allowJoin);
+      socket.emit("startgame", { preset: chosen, allow_join: allowJoin });
     }
   };
 

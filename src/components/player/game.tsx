@@ -88,7 +88,7 @@ const Game = () => {
         setPlayerActive(0);
       });
 
-      socket.emit("snapshot");
+      socket.emit("snapshot", {});
 
       return () => {
         socket.off("snapshot");
@@ -122,7 +122,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 1:
         return (
           <div className="flex flex-auto flex-wrap justify-center gap-2 w-full h-full">
@@ -163,7 +162,7 @@ const Game = () => {
                 </div>
               )}
               <div className="flex flex-col flex-grow gap-2 h-full">
-                <div className="border-white border-2 overflow-y-auto resize-y min-h-[300px]">
+                <div className="border-white border-2 overflow-y-auto h-[400px]">
                   <OrderbookCell
                     existingOrders={orderbooks}
                     selectedSecurity={selectedSecurity}
@@ -176,7 +175,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 2:
         return (
           <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 overflow-scroll">
@@ -190,7 +188,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 3:
         return (
           <div className="flex flex-auto justify-center min-w-full gap-2 overflow-scroll">
@@ -209,7 +206,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       default:
         return null;
     }

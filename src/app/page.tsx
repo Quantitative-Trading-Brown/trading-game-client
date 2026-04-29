@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import axios from "axios";
 
@@ -107,7 +106,7 @@ const Home = () => {
           <button
             onClick={createGame}
             className="w-full px-4 py-2 bg-red-700 text-lg font-semibold shadow-lg
-            hover:bg-red-600 hover:shadow-xl hover:scale-102 transition-all"
+            hover:bg-red-600 hover:shadow-xl hover:scale-105 transition-all"
           >
             Create Game
           </button>
@@ -133,7 +132,7 @@ const Home = () => {
             <button
               onClick={joinGame}
               className="w-full px-4 py-2 bg-green-700 text-lg font-semibold shadow-lg
-              hover:bg-green-600 hover:shadow-xl hover:scale-102 transition-all"
+              hover:bg-green-600 hover:shadow-xl hover:scale-105 transition-all"
             >
               Join Game
             </button>

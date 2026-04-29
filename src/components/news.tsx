@@ -38,7 +38,7 @@ const News = (props: NewsProps) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (buffer.trim() && socket) {
-        socket.emit("news", buffer);
+        socket.emit("news", { message: buffer });
         setBuffer("");
       }
     }
@@ -66,7 +66,7 @@ const News = (props: NewsProps) => {
           <input
             type="text"
             value={buffer}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             onChange={(e) => setBuffer(e.target.value)}
             placeholder="Make some news..."
             className="w-full bg-gray-700 p-1"

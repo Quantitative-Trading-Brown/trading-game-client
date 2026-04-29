@@ -21,7 +21,7 @@ const Resolution = (props: ResolutionProps) => {
 
   const handleResolved = () => {
     if (socket) {
-      socket.emit("rankgame", prices);
+      socket.emit("rankgame", { true_prices: prices });
     }
   };
 
@@ -37,7 +37,7 @@ const Resolution = (props: ResolutionProps) => {
             <input
               type="number"
               onChange={(e) => handlePriceChange(sec_id, e)}
-              className="setting w-[7em] px-2 py-1 bg-gray-700"
+              className="w-[7em] px-2 py-1 bg-gray-700"
             />
           </div>
         ))}

@@ -10,6 +10,7 @@ import OrderbookCell from "@/components/orderbook";
 import NewsCell from "@/components/news";
 import LeaderboardCell from "@/components/leaderboard";
 import SelectorCell from "@/components/secselector";
+import GraphCell from "@/components/graph";
 
 import LobbyCell from "@/components/admin/lobby";
 import ControlsCell from "@/components/admin/controls";
@@ -59,12 +60,11 @@ const Game = () => {
       socket.on("gamestate_update", updateState);
       socket.on("securities_update", updateSecurities);
 
-      socket.emit("snapshot");
+      socket.emit("snapshot", {});
 
       return () => {
         socket.off("snapshot");
         socket.off("gamestate_update");
-        socket.off("gameprops_update");
         socket.off("securities_update");
       };
     }
@@ -97,25 +97,29 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 1:
         return (
-          <div className="flex flex-auto flex-wrap justify-center min-w-full gap-2 min-h-0">
-            <div className="flex flex-auto flex-col flex-grow gap-2 h-full">
+          <div className="flex flex-auto justify-center min-w-full gap-2 min-h-0">
+            <div className="flex flex-col flex-1 gap-2 h-full min-w-0">
               <div className="border-white border-2">
                 <SelectorCell
                   securities={securities}
                   onChange={changeSelectedSecurity}
                 />
               </div>
-              <div className="flex-grow border-white border-2 overflow-y-auto">
-                <OrderbookCell
-                  existingOrders={orderbooks}
-                  selectedSecurity={selectedSecurity}
-                />
+              <div className="flex flex-1 gap-2 min-h-0">
+                <div className="flex-1 border-white border-2 overflow-y-auto h-[400px]">
+                  <OrderbookCell
+                    existingOrders={orderbooks}
+                    selectedSecurity={selectedSecurity}
+                  />
+                </div>
+                <div className="flex-1 border-white border-2 overflow-y-auto">
+                  <GraphCell selectedSecurity={selectedSecurity} />
+                </div>
               </div>
             </div>
-            <div className="max-w-[500px] flex flex-col flex-1 gap-2 h-full">
+            <div className="flex flex-col flex-1 gap-2 h-full min-w-[350px] max-w-[500px]">
               <div className="flex-grow border-white border-2 overflow-y-auto">
                 <NewsCell admin={true} news={pastnews} />
               </div>
@@ -125,7 +129,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 2:
         return (
           <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
@@ -139,7 +142,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       case 3:
         return (
           <div className="flex flex-auto justify-center min-w-full gap-2 overflow-y-auto">
@@ -158,7 +160,6 @@ const Game = () => {
             </div>
           </div>
         );
-        break;
       default:
         return null;
     }

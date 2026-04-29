@@ -12,7 +12,7 @@ const LeaderboardCell = () => {
         setRankings(rankings);
       });
 
-      socket.emit("leaderboard");
+      socket.emit("leaderboard", {});
 
       return () => {
         socket.off("leaderboard");
@@ -22,7 +22,7 @@ const LeaderboardCell = () => {
 
   return (
     <div className="overflow-y-auto h-full">
-      <table className="ranking-table table-auto border-collapse w-full">
+      <table className="table-auto border-collapse w-full">
         <thead className="outline outline-1 outline-offset-0 sticky top-0">
           <tr className="bg-black">
             <th className="text-left px-4 py-2">Ranking</th>

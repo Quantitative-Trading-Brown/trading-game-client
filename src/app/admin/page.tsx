@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-import { SocketProvider } from "@/contexts/SocketContext";
+import { SocketProvider, buildWsUrl } from "@/contexts/SocketContext";
 import Game from "@/components/admin/game";
 
 const AdminPage = () => {
@@ -47,8 +47,7 @@ const AdminPage = () => {
 
   return (
     <SocketProvider
-      namespace="admin"
-      query={{ token: localStorage.getItem("admin_token") || "" }}
+      url={buildWsUrl(localStorage.getItem("server_ip") || "", "/ws/admin", localStorage.getItem("admin_token") || "")}
     >
       <Game />
     </SocketProvider>

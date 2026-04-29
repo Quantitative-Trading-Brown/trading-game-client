@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSocket } from "@/contexts/SocketContext";
 
 import { Security, SecurityProps } from "@/utils/Types";
 
@@ -10,21 +9,48 @@ type SelectorBoxProps = {
 };
 
 const SelectorCell: React.FC<SelectorBoxProps> = ({ securities, onChange }) => {
-  const [rankings, setRankings] = useState([]);
-  const [selectedSecurity, setSelectedSecurity] = useState(
-    Object.keys(securities)[0]
-  );
+  const keys = Object.keys(securities);
+  const [selectedSecurity, setSelectedSecurity] = useState(keys[0]);
 
-  const { socket } = useSocket();
+  const select = (key: string) => {
+    setSelectedSecurity(key);
+    onChange(key);
+  };
 
   const ChangeSecurity = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSecurity(e.target.value);
-    onChange(e.target.value);
+    select(e.target.value);
   };
+
+  useEffect(() => {
+    const isInputFocused = () => {
+      const tag = document.activeElement?.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    };
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (isInputFocused()) return;
+      if (e.key !== "[" && e.key !== "]") return;
+
+      const idx = keys.indexOf(selectedSecurity);
+      if (e.key === "[") {
+        const next = (idx - 1 + keys.length) % keys.length;
+        select(keys[next]);
+      } else {
+        const next = (idx + 1) % keys.length;
+        select(keys[next]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [selectedSecurity, keys]);
 
   return (
     <div className="p-4 flex flex-col gap-4 h-full">
-      <h2 className="font-bold text-xl">Select Security</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="font-bold text-xl">Select Security</h2>
+        <span className="text-xs text-gray-500">[ / ] to cycle</span>
+      </div>
       <div className="flex gap-10 justify-center items-center flex-wrap px-8 py-5">
         <select
           id="security-select"
