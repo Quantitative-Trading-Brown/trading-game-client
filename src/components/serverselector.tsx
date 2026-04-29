@@ -66,6 +66,10 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
 
   const reloadServers = async () => {
     const servers = await fetchServers();
+
+    // Always include localhost
+    servers["localhost"] = { name: "Localhost", ip: "http://localhost:5000", up: null };
+
     setServers(servers);
 
     // Start checking all servers in parallel
@@ -103,7 +107,7 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
 
       <div className="flex px-4 items-center justify-between">
         <div>
-          Selected Server: {selected ? `${servers[selected].name}` : "None"}
+          Selected Server: {selected && servers[selected] ? servers[selected].name : "None"}
         </div>
 
         <button
