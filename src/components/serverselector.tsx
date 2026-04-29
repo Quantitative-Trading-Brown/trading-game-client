@@ -18,6 +18,10 @@ async function attemptConnect(ip: string) {
 }
 
 async function fetchServers() {
+  if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
+    return {};
+  }
+
   try {
     const querySnapshot = await getDocs(collection(db, "servers"));
     const documents = querySnapshot.docs;
@@ -25,14 +29,13 @@ async function fetchServers() {
       documents.map((doc) => [doc.id, doc.data()])
     );
 
-    // Return servers immediately with unknown status
     const servers = Object.fromEntries(
       Object.entries(data).map(([server_id, info]) => [
         server_id,
         {
           name: info.name,
           ip: info.ip,
-          up: null // null means checking
+          up: null
         }
       ])
     );
@@ -66,10 +69,7 @@ const ServerModal: React.FC<Props> = ({ onSelect }) => {
 
   const reloadServers = async () => {
     const servers = await fetchServers();
-
-    // Always include localhost
     servers["localhost"] = { name: "Localhost", ip: "http://localhost:5000", up: null };
-
     setServers(servers);
 
     // Start checking all servers in parallel
