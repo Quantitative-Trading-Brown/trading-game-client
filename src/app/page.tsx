@@ -95,7 +95,7 @@ const Home = () => {
         className="space-y-8 w-full md:max-w-[600px] md:ml-8 p-8
         bg-gray-800 shadow-lg border border-gray-700"
       >
-        <h1 className="text-4xl font-semibold pl-4">QTAB Trading Simulator</h1>
+        <h1 className="text-4xl font-semibold pl-4">Trading Simulator</h1>
         <div className="flex flex-col space-y-6">
           <div>
             <ServerSelector
